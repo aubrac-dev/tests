@@ -1,24 +1,17 @@
 <?php
-// Afficher et concaténer des variables
+// Faire des calculs simples
 
-$age_du_visiteur = 17;
-echo $age_du_visiteur;
+$nombre = 2 + 4; // $nombre prend la valeur 6
+$nombre = 5 - 1; // $nombre prend la valeur 4
+$nombre = 3 * 5; // $nombre prend la valeur 15
+$nombre = 10 / 2; // $nombre prend la valeur 5
 
-// La concaténation
+// Allez on rajoute un peu de difficulté
+$nombre = 3 * 5 + 1; // $nombre prend la valeur 16
+$nombre = (1 + 2) * 2; // $nombre prend la valeur 6
 
-// M1 - écrire trois instructions echo
+$nombre = 10;
+$resultat = ($nombre + 5) * $nombre; // $resultat prend la valeur 150
 
-$age_du_visiteur = 17;
-echo "Le visiteur a ";
-echo $age_du_visiteur;
-echo " ans";
-
-// M2.1 - Concaténer avec des guillemets doubles
-
-$age_du_visiteur = 17;
-echo "Le visiteur a $age_du_visiteur ans";
-
-// M2.2 - Concaténer avec des guillemets simples
-
-$age_du_visiteur = 17;
-echo 'Le visiteur a ' . $age_du_visiteur . ' ans'; //cette méthode qu'utilisent la plupart des programmeurs expérimentés en PHP
+$nombre = 10 % 5; // $nombre prend la valeur 0 car la division tombe juste
+$nombre = 10 % 3; // $nombre prend la valeur 1 car il reste 1
