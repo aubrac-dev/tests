@@ -1,6 +1,3 @@
 <?php
 
-
-phpinfo();
-
-?>
+$age_du_visiteur = 17;
