@@ -1,22 +1,24 @@
 <?php
-
-
-$nom_du_visiteur = "Mateo21";
-$nom_du_visiteur = 'Mateo21';
-
-$variable = "Mon \"nom\" est Mateo21";
-$variable = 'Je m\'appelle Mateo21';
-
-$variable = 'Mon "nom" est Mateo21';
-$variable = "Je m'appelle Mateo21";
+// Afficher et concaténer des variables
 
 $age_du_visiteur = 17;
+echo $age_du_visiteur;
 
-$poids = 57.3;
+// La concaténation
 
-$je_suis_un_zero = true;
-$je_suis_bon_en_php = false;
+// M1 - écrire trois instructions echo
 
-$pas_de_valeur = NULL;
+$age_du_visiteur = 17;
+echo "Le visiteur a ";
+echo $age_du_visiteur;
+echo " ans";
 
+// M2.1 - Concaténer avec des guillemets doubles
 
+$age_du_visiteur = 17;
+echo "Le visiteur a $age_du_visiteur ans";
+
+// M2.2 - Concaténer avec des guillemets simples
+
+$age_du_visiteur = 17;
+echo 'Le visiteur a ' . $age_du_visiteur . ' ans'; //cette méthode qu'utilisent la plupart des programmeurs expérimentés en PHP
