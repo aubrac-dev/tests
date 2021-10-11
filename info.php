@@ -1,46 +1,154 @@
 <?php
 
-// 1. Transmettez des données avec l'URL
+// Transmettez des données avec les formulaires
 
-// http://www.monsite.com/bonjour.php?nom=Dupont&prenom=Jean
-
-// <a href="bonjour.php?nom=Dupont&amp;prenom=Jean">Dis-moi bonjour !</a>
-
-// 2. Récupérer les paramètres en PHP
-
-// index.php -> bonjour.php
-
-// 3. Ne faites jamais confiance aux données reçues !
-
-// Tous les visiteurs peuvent trafiquer les URL
-
-// Tester la présence d'un paramètre
+// 1. Créer la base du formulaire
 
 /*
-http://localhost/tests/bonjour.php
-
- On a essayé d'afficher la valeur de $_GET['prenom']  et celle de $_GET['nom']  ... 
- Mais comme on vient de les supprimer de l'URL, ces variables n'ont pas été créées, 
- et donc elles n'existent pas .
-
- PHP nous avertit qu'on essaie d'utiliser des variables qui n'existent pas, d'où les « Undefined index »
+<form method="post" action="cible.php">
+ 
+<p>
+    On insèrera ici les éléments de notre formulaire.
+</p>
+ 
+</form>
 */
 
-// Cette fonction teste si une variable existe: isset()
+// 1.1 La méthode
+
+// 1.1.1 method="get"
 /*
-if (isset($_GET['prenom']) AND isset($_GET['nom'])) // On a le nom et le prénom
+ les données transiteront par l'URL, comme on l'a appris précédemment. 
+ On pourra les récupérer grâce à l'array $_GET  .
+  Cette méthode est assez peu utilisée car on ne peut pas envoyer beaucoup d'informations dans l'URL 
+  (je vous disais dans le chapitre précédent qu'il était préférable de ne pas dépasser 256 caractères).
+*/
+
+// 1.1.2 method="post"
+
+/*
+les données ne transiteront pas par l'URL, l'utilisateur ne les verra donc pas passer dans la barre d'adresse.
+Cette méthode permet d'envoyer autant de données que l'on veut, ce qui fait qu'on la privilégie le plus souvent.
+ Néanmoins, les données ne sont pas plus sécurisées qu'avec la méthode GET  , 
+ et il faudra toujours vérifier si tous les paramètres sont bien présents et valides, 
+ comme on l'a fait dans le chapitre précédent. On ne doit pas plus faire confiance aux formulaires qu'aux URL.
+*/
+
+// 1.2 La cible - L'attribut action  sert à définir la page appelée par le formulaire.
+
+/*
+Dans cible.php  , on a affiché une variable $_POST['prenom']  qui contient ce que l'utilisateur a entré 
+dans le formulaire.
+*/
+
+// Pour échapper le code HTML, il suffit d'utiliser la fonction htmlspecialchars  qui va transformer 
+// les chevrons des balises HTML <>  en &lt;  et &gt;  respectivement. Cela provoquera 
+// l'affichage de la balise plutôt que son exécution.
+
+// echo htmlspecialchars($_POST['prenom']);
+
+// 2. L'envoi de fichiers
+
+// Le formulaire d'envoi de fichier
+
+/*
+<form action="cible_envoi.php" method="post" enctype="multipart/form-data">
+    <p>Formulaire d'envoi de fichier</p>
+</form>
+
+-----------
+
+<form action="cible_envoi.php" method="post" enctype="multipart/form-data">
+        <p>
+                Formulaire d'envoi de fichier :<br />
+                <input type="file" name="monfichier" /><br />
+                <input type="submit" value="Envoyer le fichier" />
+        </p>
+</form>
+*/
+
+
+// 1/ Tester si le fichier a bien été envoyé
+
+/*
+<?php
+// Testons si le fichier a bien été envoyé et s'il n'y a pas d'erreur
+if (isset($_FILES['monfichier']) AND $_FILES['monfichier']['error'] == 0)
 {
-	echo 'Bonjour ' . $_GET['prenom'] . ' ' . $_GET['nom'] . ' !';
+ 
 }
-else // Il manque des paramètres, on avertit le visiteur
-{
-	echo 'Il faut renseigner un nom et un prénom !';
-} 
+?>
 */
 
-// Contrôler la valeur des paramètres -> bonjour.php
+// 2/ Vérifier la taille du fichier
 
-// vérifier que tous les paramètres que vous attendiez sont bien là ;
+/*
+<?php
+// Testons si le fichier a bien été envoyé et s'il n'y a pas d'erreur
+if (isset($_FILES['monfichier']) AND $_FILES['monfichier']['error'] == 0)
+{
+        // Testons si le fichier n'est pas trop gros
+        if ($_FILES['monfichier']['size'] <= 1000000)
+        {
+ 
+        }
+}
+?>
+*/
 
-// vérifier qu'ils contiennent bien des valeurs correctes comprises dans des intervalles raisonnables.
+// 3/ Vérifier l'extension du fichier
 
+/*
+<?php
+$infosfichier = pathinfo($_FILES['monfichier']['name']);
+$extension_upload = $infosfichier['extension'];
+?>
+*/
+
+// Final
+
+/*
+<?php
+// Testons si le fichier a bien été envoyé et s'il n'y a pas d'erreur
+if (isset($_FILES['monfichier']) AND $_FILES['monfichier']['error'] == 0)
+{
+        // Testons si le fichier n'est pas trop gros
+        if ($_FILES['monfichier']['size'] <= 1000000)
+        {
+                // Testons si l'extension est autorisée
+                $infosfichier = pathinfo($_FILES['monfichier']['name']);
+                $extension_upload = $infosfichier['extension'];
+                $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+                if (in_array($extension_upload, $extensions_autorisees))
+                {
+                
+                }
+        }
+}
+?>
+*/
+
+// 4/ Valider l'upload du fichier
+
+/*
+<?php
+// Testons si le fichier a bien été envoyé et s'il n'y a pas d'erreur
+if (isset($_FILES['monfichier']) AND $_FILES['monfichier']['error'] == 0)
+{
+        // Testons si le fichier n'est pas trop gros
+        if ($_FILES['monfichier']['size'] <= 1000000)
+        {
+                // Testons si l'extension est autorisée
+                $infosfichier = pathinfo($_FILES['monfichier']['name']);
+                $extension_upload = $infosfichier['extension'];
+                $extensions_autorisees = array('jpg', 'jpeg', 'gif', 'png');
+                if (in_array($extension_upload, $extensions_autorisees))
+                {
+                        // On peut valider le fichier et le stocker définitivement
+                        move_uploaded_file($_FILES['monfichier']['tmp_name'], 'uploads/' . basename($_FILES['monfichier']['name']));
+                        echo "L'envoi a bien été effectué !";
+                }
+        }
+}
+?>
+*/
