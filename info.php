@@ -1,173 +1,130 @@
 <?php
-// Les tableaux - les arrays
+// Les fonctions
+/*
+    - les fonctions permettent d'éviter d'avoir à répéter du code PHP que l'on utilise souvent,
+    - et qui automatisent grandement la plupart des tâches courantes.
+*/
 
-$prenom = 'Nicole'; // Nom: $prenom, Valeur: Nicole
-echo 'Bonjour ' . $prenom; // Cela affichera : Bonjour Nicole
+// PHP propose des centaines et des centaines de fonctions prêtes à l'emploi
+/*
+    une fonction qui permet de rechercher et de remplacer des mots dans une variable ;
+    une fonction qui envoie un fichier sur un serveur ;
+*/
 
-// il est possible d'enregistrer de nombreuses informations dans une seule variable grâce aux tableaux
+// 1.1 Traitement des chaînes de caractères
 
-// 1. Les tableaux numérotés
-// chaque case est identifiée par un numéro (ce numéro est appelé clé).
+// 1.1.1  strlen  : longueur d'une chaîne
 
-// Attention ! Un array numéroté commence toujours à la case n° 0 
+$phrase = 'Bonjour tout le monde ! Je suis une phrase !';
+$longueur = strlen($phrase);
 
-// 1.1 Construire un tableau numéroté
+echo 'La phrase ci-dessous comporte ' . $longueur . ' caractères :<br />' . $phrase;
 
-// 1.1.1 - La fonction array permet de créer un array
+// 1.1.2 str_replace  : rechercher et remplacer
+// remplace une chaîne de caractères par une autre
 
-$prenoms = array('François', 'Michel', 'Nicole', 'Véronique', 'Benoît');
+$ma_variable = str_replace('b', 'p', 'bim bam boum');
 
-// 1.2.2 - créer manuellement le tableau case par case
+echo $ma_variable;
 
-$prenoms[0] = 'François';
-$prenoms[1] = 'Michel';
-$prenoms[2] = 'Nicole';
+// 1.1.3 str_shuffle  : mélanger les lettres
 
-// PHP le sélectionner automatiquement en laissant les crochets vides
+$chaine = 'Cette chaîne va être mélangée !';    // mélanger aléatoirement les caractères
+$chaine = str_shuffle($chaine);
 
-$prenoms[] = 'François'; // Créera $prenoms[0]
-$prenoms[] = 'Michel'; // Créera $prenoms[1]
-$prenoms[] = 'Nicole'; // Créera $prenoms[2]
+echo $chaine;
 
-// 1.2 - Afficher un tableau numéroté
+// 1.1.4.1 strtolower  : écrire en minuscules
 
-echo $prenoms[1]; // Affiche-moi le contenu de la case n° 1 de $prenoms
+$chaine = 'COMMENT CA JE CRIE TROP FORT ???';
+$chaine = strtolower($chaine);
 
-// 2. Les tableaux associatifs
+echo $chaine;
 
-// - au lieu de numéroter les cases, on va les étiqueter en leur donnant à chacune un nom différent
+// 1.1.4.2 strtoupper  qui fait la même chose en sens inverse : minuscules → majuscules.
 
-// 2.1 Crée un tableau associatif
+// 1.1.5 Récupérer la date
 
-// 2.1.1 On crée notre array $coordonnees
+// Enregistrons les informations de date dans des variables
 
-$coordonnees = array(
-    'prenom' => 'François',
-    'nom' => 'Dupont',
-    'adresse' => '3 Rue du Paradis',
-    'ville' => 'Marseille' // « ville » associée à « Marseille ».
-);
+$jour = date('d');
+$mois = date('m');
+$annee = date('Y');
 
-// 2.1.2 - créer le tableau case par case
+$heure = date('H');
+$minute = date('i');
 
-$coordonnees['prenom'] = 'François';
-$coordonnees['nom'] = 'Dupont';
-$coordonnees['adresse'] = '3 Rue du Paradis';
-$coordonnees['ville'] = 'Marseille';
+// Maintenant on peut afficher ce qu'on a recueilli
+echo 'Bonjour ! Nous sommes le ' . $jour . '/' . $mois . '/' . $annee . 'et il est ' . $heure . ' h ' . $minute;
 
-// 2.2 Afficher un tableau associatif
+// 2. Créer ses propres fonctions
 
-echo $coordonnees['ville']; // Ce code affiche : « Marseille ».
+//  En général, si vous effectuez des opérations un peu complexes 
+//  que vous pensez avoir besoin de refaire régulièrement, il est conseillé de créer une fonction.
 
-// 3. Parcourir un tableau
+// 2.1 ex 1 bonjour
 
-// Nous allons voir trois moyens d'explorer un array : la boucle for  ; la boucle foreach ; la fonction print_r  (utilisée principalement pour le débogage).
+$nom = 'Sandra';
+echo 'Bonjour, ' . $nom . ' !<br />';
 
-// 3.1 La boucle for
+$nom = 'Patrick';
+echo 'Bonjour, ' . $nom . ' !<br />';
 
-// On crée notre array $prenoms
-$prenoms = array('François', 'Michel', 'Nicole', 'Véronique', 'Benoît');
+$nom = 'Claude';
+echo 'Bonjour, ' . $nom . ' !<br />';
 
-// Puis on fait une boucle pour tout afficher :
-for ($numero = 0; $numero < 5; $numero++) {
-    echo $prenoms[$numero] . '<br />'; // affichera $prenoms[0], $prenoms[1] etc.
+// nous allons créer une fonction qui le fait à notre place
+
+function DireBonjour($nom)
+{
+    echo 'Bonjour ' . $nom . ' !<br />';
 }
 
-// 3.2 La boucle foreach
+DireBonjour('Marie');
+DireBonjour('Patrice');
+DireBonjour('Edouard');
+DireBonjour('Pascale');
+DireBonjour('François');
+DireBonjour('Benoît');
+DireBonjour('Père Noël');
 
-// elle va mettre la valeur de cette ligne dans une variable temporaire (par exemple $element)
-
-$prenoms = array('François', 'Michel', 'Nicole', 'Véronique', 'Benoît');
-
-foreach ($prenoms as $element) { // on ne récupère que la valeur
-    echo $element . '<br />'; // affichera $prenoms[0], $prenoms[1] etc.
+function DireBonjour($nom)
+{
+    echo 'Bonjour ' . $nom . ' !<br />';
 }
 
-// L'avantage de foreach  est qu'il permet aussi de parcourir les tableaux associatifs.
+DireBonjour('Marie');
+DireBonjour('Patrice');
+DireBonjour('Edouard');
+DireBonjour('Pascale');
+DireBonjour('François');
+DireBonjour('Benoît');
+DireBonjour('Père Noël');
 
-$coordonnees = array(
-    'prenom' => 'François',
-    'nom' => 'Dupont',
-    'adresse' => '3 Rue du Paradis',
-    'ville' => 'Marseille'
-);
+// 2.2 Deuxième exemple : une fonction qui renvoie une valeur / ex. 2 - calculer le volume d'un cône
 
-foreach ($coordonnees as $element) { // on ne récupère que la valeur
-    echo $element . '<br />';
+// Calcul du volume d'un cône de rayon 5 et de hauteur 2
+$volume = 5 * 5 * 3.14 * 2 * (1 / 3);
+echo 'Le volume du cône de rayon 5 et de hauteur 2 est : ' . $volume . ' cm<sup>3</sup><br />';
+
+// Calcul du volume d'un cône de rayon 3 et de hauteur 4
+$volume = 3 * 3 * 3.14 * 4 * (1 / 3);
+echo 'Le volume du cône de rayon 3 et de hauteur 4 est : ' . $volume . ' cm<sup>3</sup><br />';
+
+// créer une fonction VolumeCone  , qui va calculer le volume du cône en fonction du rayon et de la hauteur
+
+// Ci-dessous, la fonction qui calcule le volume du cône
+function VolumeCone($rayon, $hauteur)
+{
+    $volume = $rayon * $rayon * 3.14 * $hauteur * (1 / 3); // calcul du volume
+    return $volume; // indique la valeur à renvoyer, ici le volume
 }
 
-// on peut aussi récupérer la clé de l'élément:  foreach($coordonnees as $cle => $element)
+$volume = VolumeCone(3, 1);
+echo 'Le volume d\'un cône de rayon 3 et de hauteur 1 est de ' . $volume;
 
-$coordonnees = array(
-    'prenom' => 'François',
-    'nom' => 'Dupont',
-    'adresse' => '3 Rue du Paradis',
-    'ville' => 'Marseille'
-);
+// La fonction renvoie une valeur, que l'on doit donc récupérer dans une variable :
 
-foreach ($coordonnees as $cle => $element) {
-    echo '[' . $cle . '] vaut ' . $element . '<br />';
-}
+$volume = VolumeCone(3, 1);
 
-// 3.3 Afficher rapidement un array avec print_r
-// - la fonction  print_r  c'est une sorte de  echo  spécialisé dans les  arrays.
-// - elle ne renvoie pas de code HTML comme <br />  pour les retours à la ligne
-
-$coordonnees = array(   // s'en servir pour le débogage
-    'prenom' => 'François',
-    'nom' => 'Dupont',
-    'adresse' => '3 Rue du Paradis',
-    'ville' => 'Marseille'
-);
-
-echo '<pre>';
-print_r($coordonnees);
-echo '</pre>';
-
-// 4. Rechercher dans un tableau
-// - trois types de recherches: - array_key_exists : pour vérifier si une clé existe dans l'array ;
-//                              - in_array : pour vérifier si une valeur existe dans l'array ;
-//                              - array_search : pour récupérer la clé d'une valeur dans l'array.
-
-// 4.1 Vérifier si une clé existe dans l'array : array_key_exists
-//  array_key_exists('cle', $array);
-
-$coordonnees = array(
-    'prenom' => 'François',
-    'nom' => 'Dupont',
-    'adresse' => '3 Rue du Paradis',
-    'ville' => 'Marseille'
-);
-
-if (array_key_exists('nom', $coordonnees)) {
-    echo 'La clé "nom" se trouve dans les coordonnées !';
-}
-
-if (array_key_exists('pays', $coordonnees)) {
-    echo 'La clé "pays" se trouve dans les coordonnées !';
-}
-
-// 4.2 Vérifier si une valeur existe dans l'array : in_array
-
-$fruits = array('Banane', 'Pomme', 'Poire', 'Cerise', 'Fraise', 'Framboise');
-
-if (in_array('Myrtille', $fruits)) {
-    echo 'La valeur "Myrtille" se trouve dans les fruits !';
-}
-
-if (in_array('Cerise', $fruits)) {
-    echo 'La valeur "Cerise" se trouve dans les fruits !';
-}
-
-// 4.3 Récupérer la clé d'une valeur dans l'array : array_search
-
-// si elle a trouvé la valeur, array_search  renvoie la clé correspondante (c'est-à-dire le numéro si c'est un array numéroté, ou le nom de la clé si c'est un array associatif) 
-// si elle n'a pas trouvé la valeur, array_search  renvoiefalse
-
-$fruits = array('Banane', 'Pomme', 'Poire', 'Cerise', 'Fraise', 'Framboise');
-
-$position = array_search('Fraise', $fruits);
-echo '"Fraise" se trouve en position ' . $position . '<br />';
-
-$position = array_search('Banane', $fruits);
-echo '"Banane" se trouve en position ' . $position;
+// Ensuite, on peut afficher ce que contient la variable à l'aide d'une instruction echo  .
