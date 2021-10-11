@@ -1,3 +1,3 @@
 <?php
 
-// inclusion de pages
+// Codez proprement
