@@ -1,119 +1,103 @@
 <?php
-// Les fonctions
+// Les erreurs les plus courantes
+
+// 1. Parse error
+
+// Parse error: parse error in fichier.php on line 15
+
+// -  pensez donc à regarder autour de la ligne indiquée.
+
+//  Il peut y avoir plusieurs causes :
+
+// 1.1 Vous avez oublié le point-virgule à la fin de l'instruction.
+
+$id_news = 5;   // $id_news = 5
+
+// 1.2 Vous avez oublié de fermer un guillemet (ou une apostrophe, ou une parenthèse)
+
+echo "Bonjour !";   // echo "Bonjour !;
+
+// 1.3 Vous vous êtes trompé dans la concaténation, vous avez peut-être oublié un point :
+
+$age = 22;
+echo "J'ai " . $age . " ans"; // echo "J'ai " . $age  " ans";
+
+// 1.4 Il peut aussi s'agir d'une accolade mal fermée (pour un if  , par exemple).
+
+// 1.5 Undefined function - la fonction inconnue. 
+
 /*
-    - les fonctions permettent d'éviter d'avoir à répéter du code PHP que l'on utilise souvent,
-    - et qui automatisent grandement la plupart des tâches courantes.
+Fatal Error: Call to undefined function: fonction_inconnue() in fichier.php on line 27
+
+Deux possibilités :
+    - soit la fonction n'existe vraiment pas. Vous avez probablement fait une faute de frappe, 
+    vérifiez si une fonction à l'orthographe similaire existe ;
+    - soit la fonction existe vraiment, mais PHP ne la reconnaît pas.
+     C'est parce que cette fonction se trouve dans une extension de PHP que vous n'avez pas activée
+
+     Une dernière chose : il se peut aussi que vous essayiez d'utiliser une fonction qui n'est pas disponible 
+     dans la version de PHP que vous avez.
 */
 
-// PHP propose des centaines et des centaines de fonctions prêtes à l'emploi
+// 1.6 Wrong parameter count
+
+// Warning: Wrong parameter count for fonction() in fichier.php on line 112
+
+// Cela signifie que vous avez oublié des paramètres pour la fonction, ou même que vous en avez trop mis.
+
+
+// 2. Quelques erreurs plus rares
+
+// 2.1 Headers already sent by…
+
+// Cannot modify header information - headers already sent by ...
+
+// header(), session_start()  et de setcookie()
+
+//  chacune de ces fonctions doit être utilisée au tout début de votre code PHP. 
+// Il ne faut RIEN mettre avant, sinon ça provoquera l'erreur « Headers already sent by… ».
+
 /*
-    une fonction qui permet de rechercher et de remplacer des mots dans une variable ;
-    une fonction qui envoie un fichier sur un serveur ;
+OK: <?php session_start(); ?>
+    <html>
+
+FAUX:   <html>
+        <?php session_start(); ?>
 */
 
-// 1.1 Traitement des chaînes de caractères
+// 2.2 L'image contient des erreurs
 
-// 1.1.1  strlen  : longueur d'une chaîne
+/*
+Ce message survient lorsque vous travaillez avec la bibliothèque GD. 
+Si vous avez fait une erreur dans votre code (par exemple une banale « parse error »), 
+cette erreur sera inscrite dans l'image. Du coup, l'image ne sera pas valide et le navigateur
+ ne pourra pas l'afficher.
 
-$phrase = 'Bonjour tout le monde ! Je suis une phrase !';
-$longueur = strlen($phrase);
+ Bon, d'accord, l'erreur est dans l'image. Mais comment faire pour faire « apparaître » l'erreur ?
 
-echo 'La phrase ci-dessous comporte ' . $longueur . ' caractères :<br />' . $phrase;
+Deux possibilités :
 
-// 1.1.2 str_replace  : rechercher et remplacer
-// remplace une chaîne de caractères par une autre
+vous pouvez supprimer la ligne suivante dans votre code :
 
-$ma_variable = str_replace('b', 'p', 'bim bam boum');
+<?php header ("Content-type: image/png"); ?>
 
-echo $ma_variable;
+L'erreur apparaîtra à la place du message « L'image contient des erreurs » ;
 
-// 1.1.3 str_shuffle  : mélanger les lettres
+vous pouvez aussi afficher le code source de l'image (comme si vous alliez regarder la source HTML 
+de la page, sauf que là, il s'agit d'une image).
 
-$chaine = 'Cette chaîne va être mélangée !';    // mélanger aléatoirement les caractères
-$chaine = str_shuffle($chaine);
+Dans les deux cas, vous verrez le message d'erreur apparaître. 
+À partir de là, il ne vous restera plus qu'à corriger le bug !
+*/
 
-echo $chaine;
+// 2.3 Maximum execution time exceeded
 
-// 1.1.4.1 strtolower  : écrire en minuscules
+// Ça, c'est le genre d'erreur qui arrive le plus souvent à cause d'une boucle infinie :
 
-$chaine = 'COMMENT CA JE CRIE TROP FORT ???';
-$chaine = strtolower($chaine);
-
-echo $chaine;
-
-// 1.1.4.2 strtoupper  qui fait la même chose en sens inverse : minuscules → majuscules.
-
-// 1.1.5 Récupérer la date
-
-// Enregistrons les informations de date dans des variables
-
-$jour = date('d');
-$mois = date('m');
-$annee = date('Y');
-
-$heure = date('H');
-$minute = date('i');
-
-// Maintenant on peut afficher ce qu'on a recueilli
-echo 'Bonjour ! Nous sommes le ' . $jour . '/' . $mois . '/' . $annee . 'et il est ' . $heure . ' h ' . $minute;
-
-// 2. Créer ses propres fonctions
-
-//  En général, si vous effectuez des opérations un peu complexes 
-//  que vous pensez avoir besoin de refaire régulièrement, il est conseillé de créer une fonction.
-
-// 2.1 ex 1 bonjour
-
-$nom = 'Sandra';
-echo 'Bonjour, ' . $nom . ' !<br />';
-
-$nom = 'Patrick';
-echo 'Bonjour, ' . $nom . ' !<br />';
-
-$nom = 'Claude';
-echo 'Bonjour, ' . $nom . ' !<br />';
-
-// nous allons créer une fonction qui le fait à notre place
-
-function DireBonjour($nom)
+/*
+$nombre = 5;
+while ($nombre == 5)
 {
-    echo 'Bonjour ' . $nom . ' !<br />';
+    echo 'Zéro ';
 }
-
-DireBonjour('Marie');
-DireBonjour('Patrice');
-DireBonjour('Edouard');
-DireBonjour('Pascale');
-DireBonjour('François');
-DireBonjour('Benoît');
-DireBonjour('Père Noël');
-
-
-
-// 2.2 Deuxième exemple : une fonction qui renvoie une valeur / ex. 2 - calculer le volume d'un cône
-
-// Calcul du volume d'un cône de rayon 5 et de hauteur 2
-$volume = 5 * 5 * 3.14 * 2 * (1 / 3);
-echo 'Le volume du cône de rayon 5 et de hauteur 2 est : ' . $volume . ' cm<sup>3</sup><br />';
-
-// Calcul du volume d'un cône de rayon 3 et de hauteur 4
-$volume = 3 * 3 * 3.14 * 4 * (1 / 3);
-echo 'Le volume du cône de rayon 3 et de hauteur 4 est : ' . $volume . ' cm<sup>3</sup><br />';
-
-// créer une fonction VolumeCone  , qui va calculer le volume du cône en fonction du rayon et de la hauteur
-
-// Ci-dessous, la fonction qui calcule le volume du cône
-function VolumeCone($rayon, $hauteur)
-{
-    $volume = $rayon * $rayon * 3.14 * $hauteur * (1 / 3); // calcul du volume
-    return $volume; // indique la valeur à renvoyer, ici le volume
-}
-
-$volume = VolumeCone(3, 1);
-echo 'Le volume d\'un cône de rayon 3 et de hauteur 1 est de ' . $volume;
-
-// La fonction renvoie une valeur, que l'on doit donc récupérer dans une variable :
-
-$volume = VolumeCone(3, 1);
-
-// Ensuite, on peut afficher ce que contient la variable à l'aide d'une instruction echo  .
+*/
