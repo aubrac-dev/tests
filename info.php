@@ -37,3 +37,10 @@ else // Il manque des paramètres, on avertit le visiteur
 	echo 'Il faut renseigner un nom et un prénom !';
 } 
 */
+
+// Contrôler la valeur des paramètres -> bonjour.php
+
+// vérifier que tous les paramètres que vous attendiez sont bien là ;
+
+// vérifier qu'ils contiennent bien des valeurs correctes comprises dans des intervalles raisonnables.
+
