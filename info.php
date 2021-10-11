@@ -88,18 +88,7 @@ DireBonjour('François');
 DireBonjour('Benoît');
 DireBonjour('Père Noël');
 
-function DireBonjour($nom)
-{
-    echo 'Bonjour ' . $nom . ' !<br />';
-}
 
-DireBonjour('Marie');
-DireBonjour('Patrice');
-DireBonjour('Edouard');
-DireBonjour('Pascale');
-DireBonjour('François');
-DireBonjour('Benoît');
-DireBonjour('Père Noël');
 
 // 2.2 Deuxième exemple : une fonction qui renvoie une valeur / ex. 2 - calculer le volume d'un cône
 
