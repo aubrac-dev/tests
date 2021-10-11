@@ -8,7 +8,7 @@
 
 <body>
 
-    <p><a href="bonjour.php?nom=Dupont&prenom=Jean">Dis-moi bonjour !</a></p>
+    <p><a href="bonjour.php?nom=Dupont&prenom=Jean&repeter=8">Dis-moi bonjour !</a></p>
 
 </body>
 
