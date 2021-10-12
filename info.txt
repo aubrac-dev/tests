@@ -1,3 +1,35 @@
 Session & Cookies
 
- 
+Les sessions
+
+Les sessions constituent un moyen de conserver des variables sur toutes les pages de votre site. Jusqu'ici, nous étions parvenus à passer des variables de page en page via la méthode  GET  (en modifiant l'URL :  page.php?variable=valeur ) et via la méthode  POST  (à l'aide d'un formulaire).
+
+Mais imaginez maintenant que vous souhaitiez transmettre des variables sur toutes les pages de votre site pendant la durée de la présence d'un visiteur. Ce ne serait pas facile avec  GET  et  POST  , car ils sont plutôt faits pour transmettre les informations une seule fois, d'une page à une autre. On sait ainsi envoyer d'une page à une autre le nom et le prénom du visiteur, mais dès qu'on charge une autre page, ces informations sont « oubliées ». C'est pour cela qu'on a inventé les sessions.
+
+Fonctionnement des sessions
+Comment sont gérées les sessions en PHP ? Voici les trois étapes à connaître.
+
+Un visiteur arrive sur votre site. On demande à créer une session pour lui. PHP génère alors un numéro unique. Ce numéro est souvent très gros et écrit en hexadécimal ; par exemple : a02bbffc6198e6e0cc2715047bc3766f (ce numéro sert d'identifiant et est appelé « ID de session », ou  PHPSESSID . PHP transmet automatiquement cet ID de page en page, en utilisant généralement un cookie).
+
+Une fois la session générée, on peut créer une infinité de variables de session pour nos besoins. Par exemple, on peut créer une variable  $_SESSION['nom']  qui contient le nom du visiteur,  $_SESSION['prenom']  qui contient le prénom, etc. Le serveur conserve ces variables même lorsque la page PHP a fini d'être générée. Cela veut dire que, quelle que soit la page de votre site, vous pourrez récupérer par exemple le nom et le prénom du visiteur via la superglobale  $_SESSION  !
+
+Lorsque le visiteur se déconnecte de votre site, la session est fermée et PHP « oublie » alors toutes les variables de session que vous avez créées. Il est en fait difficile de savoir précisément quand un visiteur quitte votre site. En effet, lorsqu'il ferme son navigateur ou va sur un autre site, le vôtre n'en est pas informé. Soit le visiteur clique sur un bouton « Déconnexion » (que vous aurez créé) avant de s'en aller, soit on attend quelques minutes d'inactivité pour le déconnecter automatiquement : on parle alors de timeout. Le plus souvent, le visiteur est déconnecté par un timeout.
+
+Tout ceci peut vous sembler un peu compliqué, mais c'est en fait très simple à utiliser. Vous devez connaître deux fonctions :
+
+ Tout ceci peut vous sembler un peu compliqué, mais c'est en fait très simple à utiliser. Vous devez connaître deux fonctions :
+
+ session_start()  : démarre le système de sessions. Si le visiteur vient d'arriver sur le site, alors un numéro de session est généré pour lui. Vous devez appeler cette fonction au tout début de chacune des pages où vous avez besoin des variables de session.
+
+ session_destroy()  : ferme la session du visiteur. Cette fonction est automatiquement appelée lorsque le visiteur ne charge plus de page de votre site pendant plusieurs minutes (c'est le timeout), mais vous pouvez aussi créer une page « Déconnexion » si le visiteur souhaite se déconnecter manuellement.
+
+Il y a un petit piège : il faut appeler  session_start()  sur chacune de vos pages AVANT d'écrire le moindre code HTML (avant même la balise  <!DOCTYPE>  ;). Si vous oubliez de lancer  session_start() , vous ne pourrez pas accéder aux variables superglobales  $_SESSION .
+
+L'utilité des sessions en pratique
+Concrètement, les sessions peuvent servir dans de nombreux cas sur votre site (et pas seulement pour retenir un nom et un prénom !). Voici quelques exemples :
+
+Imaginez un script qui demande un login et un mot de passe pour qu'un visiteur puisse se « connecter » (s'authentifier). On peut enregistrer ces informations dans des variables de session et se souvenir de l'identifiant du visiteur sur toutes les pages du site !
+
+Puisqu'on retient son login et que la variable de session n'est créée que s'il a réussi à s'authentifier, on peut l'utiliser pour restreindre certaines pages de notre site à certains visiteurs uniquement. Cela permet de créer toute une zone d'administration sécurisée : si la variable de session login existe, on affiche le contenu, sinon on affiche une erreur. Cela devrait vous rappeler le TP « Page protégée par mot de passe », sauf qu'ici on peut se servir des sessions pour protéger automatiquement plusieurs pages.
+
+On se sert activement des sessions sur les sites de vente en ligne. Cela permet de gérer un « panier » : on retient les produits que commande le client quelle que soit la page où il est. Lorsqu'il valide sa commande, on récupère ces informations et… on le fait payer
