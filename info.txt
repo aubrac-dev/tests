@@ -15,6 +15,19 @@ formulaire.php : contient un simple formulaire ;
 
 secret.php : contient les « codes secrets » mais ne les affiche que si on lui donne le mot de passe.
 
+ TP en une seule page au lieu de deux.
+
+ Voici alors ce qui se passera :
+
+La première fois que le visiteur charge la page formulaire.php  , aucune donnée POST  n'est envoyée à la page. 
+C'est donc le formulaire qui s'affiche.
+
+Une fois qu'on a envoyé le formulaire, la page formulaire.php  est rechargée et cette fois, 
+elle reçoit les données POST  qu'on vient d'envoyer. Elle peut donc les analyser et, 
+si le mot de passe est bon, elle affiche les codes secrets.
+
+
+
 
 
 
