@@ -1,8 +1,21 @@
  TP : Page protégée par mot de passe
 
- Problème posé
+1. Problème posé
 On doit protéger l'accès à une page par un mot de passe. 
 La page ne doit pas s'afficher si l'on n'a pas le mot de passe. 
+
+2. Schéma du code
+Pour que l'utilisateur puisse entrer le mot de passe, le plus simple est de créer un formulaire. 
+Celui-ci appellera la page protégée et lui enverra le mot de passe.
+L'accès au contenu de la page ne sera autorisé que si le mot de passe fourni par l'utilisateur est kangourou.
+
+Vous devez donc créer deux pages web :
+
+formulaire.php : contient un simple formulaire ;
+
+secret.php : contient les « codes secrets » mais ne les affiche que si on lui donne le mot de passe.
+
+
 
 
 
