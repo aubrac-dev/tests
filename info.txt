@@ -1,2 +1,193 @@
 Lisez et écrivez dans un fichier
 
+Les variables sont simples à utiliser, mais elles ne contiennent que des informations temporaires. La durée de vie d'une variable n'est en effet jamais très longue. Or, vous aurez certainement besoin sur votre site de stocker des informations définitivement.
+
+Par exemple, il est impossible de stocker les messages d'un forum dans des variables… puisque celles-ci seront supprimées à la fin de l'exécution de la page ! Pour stocker ces informations longtemps, il faut les écrire sur le disque dur. Quoi de plus logique pour cela que de créer des fichiers ?
+
+PHP permet justement d'enregistrer des données dans des fichiers sur le disque dur du serveur.
+
+Autoriser l'écriture de fichiers (chmod)
+Pour que PHP puisse créer des fichiers, il doit avoir accès à un dossier qui lui en autorise la création. Il faut en effet donner le droit à PHP de créer et modifier les fichiers, sinon celui-ci ne pourra rien faire.
+
+Pour créer ces droits, on dit en général qu'on doit modifier le chmod du fichier ou du dossier. C'est le nom de la commande qui permet de modifier les droits sous Linux.
+
+Sous Windows, vous n'en avez probablement jamais entendu parler, tout simplement parce que ça n'existe pas. Mais le serveur de votre site, lui, est le plus souvent sous Linux. Et sous Linux, on utilise ce qu'on appelle le chmod pour gérer les droits.
+
+Le chmod est un nombre à trois chiffres que l'on attribue à un fichier (par exemple 777). Selon la valeur de ce nombre, Linux autorisera (ou non) la modification du fichier.
+Le problème, c'est que Linux n'autorise généralement pas les modifications de fichiers par un script PHP. Or, c'est justement ce qu'on veut faire. Alors, comment va-t-on faire pour s'en sortir ? En modifiant le chmod, pardi !
+
+Il va falloir passer par… votre logiciel FTP ! Oui, celui-là même qui vous sert à envoyer vos pages sur le web.
+En ce qui me concerne, j'utilise FileZilla (vous pouvez utiliser celui que vous voulez, la manipulation est quasiment la même).
+
+Connectez-vous à votre serveur, et faites un clic droit sur l'un des fichiers, pour obtenir la figure suivante.
+
+Modifier les permissions d'un fichier
+Modifier les permissions d'un fichier
+En général, vous devriez avoir un menu « Chmod» ou « Permissions de fichier » (comme moi).
+Cela devrait ouvrir une fenêtre qui ressemble à peu près à la figure suivante.
+
+CHMOD à 777 pour activer l'écriture
+chmod à 777 pour activer l'écriture
+Et c'est là que se trouve la solution à tous nos problèmes ! Sans rentrer dans les détails parce qu'il n'est pas question de faire un cours sur Linux ici, voilà comment ça fonctionne : il y a trois types de personnes qui ont le droit de lire/modifier des fichiers.
+
+Le propriétaire : c'est l'utilisateur sous Linux qui a créé le fichier. Lui, il a en général tous les droits : lire, écrire, exécuter.
+Selon les droits qu'il possède, le premier chiffre du chmod change. Ici, c'est 7 : ça veut dire qu'il a tous les droits.
+
+Le groupe : ça ne nous concerne pas trop là non plus. Ce sont les droits du groupe d'utilisateurs auquel appartient le fichier. Cela correspond au deuxième chiffre du chmod (ici : 7).
+
+Permissions publiques : ah ! Là, ça devient intéressant. Les permissions publiques concernent tout le monde, c'est-à-dire même vos fichiers PHP. C'est le troisième chiffre du chmod (par défaut 5 ; il faut mettre cette valeur à 7).
+
+Si vous rentrez 777 comme valeur pour le chmod, cela signifie que tous les programmes du serveur ont le droit de modifier le fichier, notamment PHP. Il faut donc rentrer 777 pour que PHP puisse modifier le fichier en question.
+
+Vous pouvez aussi modifier le chmod d'un dossier. Cela déterminera si on a le droit de lire/écrire dans ce dossier.
+Cela vous sera notamment utile si vous avez besoin de créer des fichiers dans un dossier en PHP.
+
+Pour ceux qui veulent en savoir plus sur les chmod, je traite le sujet beaucoup plus en détail dans mon cours sur Linux. N'hésitez pas à aller lire le tutoriel si le sujet vous intéresse.
+
+Ouvrir et fermer un fichier
+Avant de lire/écrire dans un fichier, il faut d'abord l'ouvrir.
+
+Commencez par créer un fichier compteur.txt  (par exemple). Envoyez-le sur votre serveur avec votre logiciel FTP, et appliquez-lui un chmod à 777 comme on vient d'apprendre à le faire.
+
+Maintenant, on va créer un fichier PHP qui va travailler sur compteur.txt  .
+Votre mission, si vous l'acceptez : compter le nombre de fois qu'une page a été vue sur votre site, et enregistrer ce nombre dans ce fichier.
+
+Voici comment nous allons procéder :
+
+<?php
+// 1 : on ouvre le fichier
+$monfichier = fopen('compteur.txt', 'r+');
+
+// 2 : on fera ici nos opérations sur le fichier...
+
+// 3 : quand on a fini de l'utiliser, on ferme le fichier
+fclose($monfichier);
+?>
+Il y a trois étapes à respecter.
+
+On ouvre le fichier avec fopen  . Cette fonction renvoie une information que vous devez mettre dans une variable (ici : $monfichier  ). Cela nous sera utile tout à l'heure pour fermer le fichier.
+On indique tout d'abord à fopen  le fichier qu'on veut ouvrir ( compteur.txt  ), puis comment on veut l'ouvrir (ici j'ai mis 'r+'  ). Voici, regroupées dans le tableau ci-dessous, les principales possibilités à notre disposition.
+
+Mode
+
+Explication
+
+r
+
+Ouvre le fichier en lecture seule. Cela signifie que vous pourrez seulement lire le fichier.
+
+r+
+
+Ouvre le fichier en lecture et écriture. Vous pourrez non seulement lire le fichier, mais aussi y écrire (on l'utilisera assez souvent en pratique).
+
+a
+
+Ouvre le fichier en écriture seule. Mais il y a un avantage : si le fichier n'existe pas, il est automatiquement créé.
+
+a+
+
+Ouvre le fichier en lecture et écriture. Si le fichier n'existe pas, il est créé automatiquement. Attention : le répertoire doit avoir un chmod à 777, dans ce cas ! À noter que si le fichier existe déjà, le texte sera ajouté à la fin.
+
+Ici, on a créé le fichier avant, donc pas besoin d'utiliser a+  .
+
+On fait nos opérations de lecture/écriture sur le fichier. Nous allons voir comment ça fonctionne un peu plus loin.
+
+Enfin, quand on a fini d'utiliser le fichier, on fait un fclose  pour le fermer. On doit préciser quel fichier doit être fermé : mettez-y la variable $monfichier  pour que PHP sache duquel il s'agit, et c'est bon.
+
+Vous n'êtes absolument pas obligé de donner l'extension .txt  à votre fichier. Vous pouvez l'appeler comme vous voulez : compteur.cpt  , compteur.num  , ou même compteur  tout court.
+
+Lire et écrire dans un fichier
+Maintenant que nous savons ouvrir et fermer notre fichier, nous allons apprendre à le lire et à le modifier.
+
+Lire
+Pour lire, on a deux possibilités :
+
+lire caractère par caractère avec la fonction fgetc ;
+
+lire ligne par ligne avec fgets  .
+
+En général, on se débrouillera pour mettre une information par ligne dans notre fichier. On se sert donc assez peu de fgetc  , qui est plutôt lourd à utiliser (il faudrait faire une boucle pour lire caractère par caractère).
+
+Dans notre cas, on va supposer que notre fichier ne contient qu'une ligne : le nombre de pages qui ont été vues sur le site.
+Pour récupérer ce nombre, il faudra procéder comme ceci :
+
+<?php
+// 1 : on ouvre le fichier
+$monfichier = fopen('compteur.txt', 'r+');
+ 
+// 2 : on lit la première ligne du fichier
+$ligne = fgets($monfichier);
+ 
+// 3 : quand on a fini de l'utiliser, on ferme le fichier
+fclose($monfichier);
+?>
+Il faut indiquer à fgets  le fichier à lire. On lui donne notre variable $monfichier  qui lui permettra de l'identifier.
+fgets  renvoie toute la ligne (la fonction arrête la lecture au premier saut de ligne). Donc notre variable $ligne  devrait contenir la première ligne du fichier.
+
+Et si mon fichier fait quinze lignes, comment je fais pour toutes les lire ?
+
+Il faut faire une boucle. Un premier fgets  vous donnera la première ligne. Au second tour de boucle, le prochain appel à fgets  renverra la deuxième ligne, et ainsi de suite.
+
+C'est un peu lourd, mais si on stocke assez peu d'informations dans le fichier, cela peut suffire. Sinon, si on a beaucoup d'informations à stocker, on préfèrera utiliser une base de données (on en parlera dans la prochaine partie).
+
+Écrire
+Pour l'écriture, on n'a qu'une seule possibilité : utiliser fputs  .
+Cette fonction va écrire la ligne que vous voulez dans le fichier.
+
+Elle s'utilise comme ceci :
+
+<?php fputs($monfichier, 'Texte à écrire'); ?>
+Toutefois, il faut savoir où l'on écrit le texte. En effet, le fonctionnement d'un fichier est assez étrange…
+
+Vous l'ouvrez avec fopen  .
+
+Vous lisez par exemple la première ligne avec fgets  .
+
+Oui, mais voilà : maintenant, le « curseur » de PHP se trouve à la fin de la première ligne (vu qu'il vient de lire la première ligne), comme dans la figure suivante.
+
+Le curseur de PHP est à la fin de la première ligne
+Le curseur de PHP est à la fin de la première ligne
+Si vous faites un fputs  juste après, il va écrire à la suite ! Pour éviter ça, on va utiliser la fonction fseek  qui va replacer le curseur où l'on veut dans le fichier. En l'occurrence, on va replacer le curseur au début du fichier en faisant :
+fseek($monfichier, 0);
+Notre curseur sera alors repositionné au début, voyez donc la figure suivante.
+
+Le curseur de PHP est replacé à l'endroit choisi
+Le curseur de PHP est replacé à l'endroit choisi
+Si vous avez ouvert le fichier avec le mode 'a'  ou 'a+'  , toutes les données que vous écrirez seront toujours ajoutées à la fin du fichier. La fonction fseek  n'aura donc aucun effet dans ce cas.
+
+Ouf, notre curseur est au début du fichier, on peut maintenant faire un fputs  . La ligne va s'écrire par-dessus l'ancienne, ce qui fait que l'ancien texte sera écrasé (remplacé par le nouveau).
+
+Pour y voir un peu plus clair, je vous propose ce code source qui compte le nombre de fois que la page a été vue :
+
+<?php
+$monfichier = fopen('compteur.txt', 'r+');
+ 
+$pages_vues = fgets($monfichier); // On lit la première ligne (nombre de pages vues)
+$pages_vues += 1; // On augmente de 1 ce nombre de pages vues
+fseek($monfichier, 0); // On remet le curseur au début du fichier
+fputs($monfichier, $pages_vues); // On écrit le nouveau nombre de pages vues
+ 
+fclose($monfichier);
+ 
+echo '<p>Cette page a été vue ' . $pages_vues . ' fois !</p>';
+?>
+x
+Page qui compte le nombre de fois que la page a été vue
+Ce n'était pas si dur, vous voyez.
+
+Voici la description des quatre lignes du milieu (les plus importantes) :
+
+On récupère la première ligne du fichier, qui est le nombre de pages qui ont été vues pour le moment sur le site.
+
+On ajoute 1 à la variable $pages_vues  . Si elle valait 15, elle vaudra désormais 16.
+
+On replace notre fameux « curseur » au début du fichier (parce que sinon, il se trouverait à la fin de la première ligne et on aurait écrit à la suite).
+
+On écrit notre nouveau nombre de pages vues dans le fichier, en écrasant l'ancien nombre.
+
+Si vous avez oublié de mettre un chmod à 777 sur le fichier compteur.txt  , vous aurez l'erreur suivante :
+« Warning: fopen(compteur.txt): failed to open stream: Permission denied ».
+Ici, PHP essaie de vous dire qu'il n'a pas réussi à ouvrir le fichier car il n'a pas le droit d'écrire dedans. Il faut donc absolument mettre ce chmod si vous voulez pouvoir toucher au fichier !
+
+Voilà, vous venez de voir comment on se sert d'un fichier : ouverture, lecture, écriture, fermeture.
+Pour un gros fichier, cela devient vite compliqué, mais pour un petit fichier comme celui-ci, cela convient très bien.
