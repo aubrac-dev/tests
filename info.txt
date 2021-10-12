@@ -1,0 +1,8 @@
+ TP : Page protégée par mot de passe
+
+ Problème posé
+On doit protéger l'accès à une page par un mot de passe. 
+La page ne doit pas s'afficher si l'on n'a pas le mot de passe. 
+
+
+
