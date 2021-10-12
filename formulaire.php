@@ -16,7 +16,7 @@
             Veuillez entrer le mot de passe pour obtenir les codes d'accès au serveur central de la NASA :
         </p>
 
-        <form action="secret.php" method="post">
+        <form action="formulaire.php" method="post">
             <p>
                 <label for="pwd">Mot de pass:</label>
                 <input type="password" id="pwd" name="mot_de_passe" />
