@@ -1,2 +1,277 @@
 phpMyAdmin
 
+Nous allons maintenant faire des manipulations sur une base de données. Vous allez « voir » ce que peuvent contenir une base et ses tables.
+
+Il existe plusieurs façons d'accéder à sa base de données et d'y faire des modifications. On peut utiliser une ligne de commande (console), exécuter les requêtes en PHP ou faire appel à un programme qui nous permet d'avoir rapidement une vue d'ensemble. Ici, je vous propose de découvrir phpMyAdmin, un des outils les plus connus permettant de manipuler une base de données MySQL.
+
+phpMyAdmin est livré avec MAMP et XAMPP ; vous allez donc pouvoir vous en servir tout de suite. Presque tous les hébergeurs permettent d'utiliser phpMyAdmin ; renseignez-vous auprès du vôtre pour savoir comment y accéder.
+
+Créer une table
+La première chose que je vous demande de faire, c'est d'ouvrir phpMyAdmin. Sous MAMP par exemple, ouvrez la page d'accueil WebStart de MAMP, puis allez dans le menu Outils (Tools) / phpMyAdmin.
+
+phpMyAdmin n'est pas un programme mais un ensemble de pages PHP toutes prêtes, dont on se sert pour gagner du temps.
+On commence donc simplement : dans ce chapitre, nous ne coderons pas pour le moment ; nous allons simplement le manipuler.
+
+L'accueil de phpMyAdmin ressemble à la figure suivante.
+
+Accueil de phpMyAdmin
+Accueil de phpMyAdmin
+Vous pouvez remarquer deux endroits importants, signalés par des numéros sur ma capture d'écran.
+
+Liste des bases : c'est la liste de vos bases de données. Sur ma capture d'écran, on a donc plusieurs bases : information_schema  , mysql  , performance_schema  et  sys .
+
+Créer une base : pour créer une nouvelle base de données, cliquez sur "Nouvelle base de données", entrez un nom dans le champ de formulaire qui apparaît à droite, cliquez sur « Créer » et hop ! c'est fait.
+
+Ne touchez pas aux bases de données qui existent déjà, elles servent au fonctionnement interne de MySQL.
+
+Nous allons maintenant créer une nouvelle base test dans laquelle nous travaillerons tout le temps par la suite. Utilisez le formulaire à droite pour créer cette base : entrez le nom  test  et cliquez sur le bouton Créer  .
+
+L'écran de la figure suivante devrait alors s'afficher si la base a bien été créée.
+
+La base de test a été créée, vide
+La base de test a été créée, vide
+On vous indique qu'aucune table n'a été trouvée dans la base. Et si on en créait une ?
+
+Dans le champ « Créer une nouvelle table sur la base test », entrez le nom news et le nombre de colonnes 3  , comme vous le montre la figure suivante.
+
+Créer une table
+Créer une table
+Cliquez sur « Exécuter ».
+
+La table n'est pas immédiatement créée : il faut maintenant indiquer le nom des champs, et les données qu'ils peuvent contenir. Je vous propose de faire simple, car pour l'instant on cherche juste à tester phpMyAdmin. Pour cette table, on va créer les trois champs suivants :
+
+id : comme bien souvent, vous allez devoir créer un champ appelé id  (prononcez à l'anglaise « aille di »). C'est le numéro d'identification. Grâce à lui, toutes vos entrées seront numérotées, ce qui est bien pratique. Il y aura ainsi les news n° 1, n° 2, n° 3, etc. ;
+
+titre : ce champ contiendra le titre de la news ;
+
+contenu : enfin, ce champ contiendra la news elle-même.
+
+Soyons clairs : je ne suis pas en train de vous apprendre à créer un système de news pour votre site. Nous aurons l'occasion d'y travailler un peu plus tard. Pour le moment, nous cherchons seulement à découvrir le fonctionnement de phpMyAdmin.
+
+Vous devriez avoir la figure suivante sous les yeux.
+
+Création d'une table MySQL
+Création d'une table MySQL
+Chaque colonne représente un champ. Nous avons demandé trois champs, il y a donc trois colonnes.
+
+phpMyAdmin vous demande beaucoup d'informations ; mais rassurez-vous, il n'est pas nécessaire de tout remplir. La plupart du temps, les sections les plus intéressantes seront :
+
+Champ : permet de définir le nom du champ (très important !) ;
+
+Type : le type de données que va stocker le champ (nombre entier, texte, date…) ;
+
+Taille/Valeurs : permet d'indiquer la taille maximale du champ, utile pour le type VARCHAR  notamment, afin de limiter le nombre de caractères autorisés ;
+
+Index : active l'indexation du champ. Ce mot barbare signifie dans les grandes lignes que votre champ sera adapté aux recherches. Le plus souvent, on utilise l'index PRIMARY  sur les champs de type id ;
+
+AUTO_INCREMENT : permet au champ de s'incrémenter tout seul à chaque nouvelle entrée. On l'utilise fréquemment sur les champs de type id  .
+
+Je vous propose de remplir le formulaire comme je l'ai fait. Veillez à bien cocher AUTO_INCREMENT  et à définir un index PRIMARY sur le champ id  .
+
+Une fois que c'est fait, cliquez sur le bouton Enregistrer en bas de la page. Votre table est créée !
+
+Avant d'aller plus loin, je voudrais revenir un peu plus en détail sur les types de champs et les index, notamment l'index PRIMARY  qu'on a utilisé.
+
+Les types de champs MySQL
+Si vous déroulez la liste des types que vous propose MySQL, vous devriez tomber à la renverse, comme l'illustre la figure suivante.
+
+Types de données MySQL
+Types de données MySQL
+Alors que PHP ne propose que quelques types de données que l'on connaît bien maintenant ( int  , string  , bool  …), MySQL propose une quantité très importante de types de données.
+
+En fait, ceux-ci sont classés par catégories.
+
+NUMERIC : ce sont les nombres. On y trouve des types dédiés aux petits nombres entiers ( TINYINT  ), aux gros nombres entiers ( BIGINT  ), aux nombres décimaux, etc.
+
+DATE and TIME : ce sont les dates et les heures. De nombreux types différents permettent de stocker une date, une heure, ou les deux à la fois.
+
+STRING : ce sont les chaînes de caractères. Là encore, il y a des types adaptés à toutes les tailles.
+
+SPATIAL : cela concerne les bases de données spatiales, utiles pour ceux qui font de la cartographie. Ce ne sera pas notre cas, donc nous n'en parlerons pas ici.
+
+En fait, phpMyAdmin a eu la bonne idée de proposer au tout début de cette liste les quatre types de données les plus courants :
+
+INT : nombre entier ;
+
+VARCHAR : texte court (entre 1 et 255 caractères) ;
+
+TEXT : long texte (on peut y stocker un roman sans problème) ;
+
+DATE : date (jour, mois, année).
+
+Nous n'aurons besoin de jongler qu'entre ces quatre types, donc ce sont eux qu'il faut retenir. Cela couvrira 99 % de nos besoins.
+
+Une petite remarque à propos de VARCHAR : c'est un type adapté aux textes courts, comme le titre d'une news de votre site. Sa seule exigence est que vous devez indiquer la taille maximale du champ (entre 1 et 255). Si vous ne le faites pas, vous ne pourrez pas créer la table. Si vous ne savez pas à combien limiter votre champ, vous pouvez mettre la valeur maximale (255), comme je l'ai fait dans l'exemple précédent.
+
+Les clés primaires
+Toute table doit posséder un champ qui joue le rôle de clé primaire. La clé primaire permet d'identifier de manière unique une entrée dans la table. En général, on utilise le champ id comme clé primaire, comme on vient de le faire.
+
+Chaque news de votre site doit pouvoir être identifiée de manière unique. Le moyen le plus simple pour cela est de lui donner un numéro unique, dans un champ nommé « id ». Il ne peut pas y avoir deux news avec le même id ! Il en irait de même pour les autres tables de votre site : par exemple, chaque membre doit se voir attribuer un numéro unique. Si deux membres ont le même numéro, on ne pourra pas les différencier !
+
+Il est vital que chaque table possède sa clé primaire. On ne vous interdira pas de créer des tables sans clé primaire, mais leurs performances seront extrêmement réduites. Je vous conseille donc de prendre le réflexe de créer à chaque fois ce champ « id » en lui donnant l'index PRIMARY  , ce qui aura pour effet d'en faire une clé primaire. Vous en profiterez en général pour cocher la case AUTO_INCREMENT  afin que ce champ gère lui-même les nouvelles valeurs automatiquement (1, 2, 3, 4…).
+
+Modifier une table
+À gauche de votre écran, la table « news » que vous venez de créer devient visible, telle que vous la voyez sur la figure suivante.
+
+Liste des tables
+Liste des tables
+Si vous cliquez sur le mot « news », le contenu de la table s'affiche à droite de l'écran.
+
+Si vous cliquez sur la petite image de tableau à gauche, phpMyAdmin vous présentera la structure de la table.
+
+Actuellement, comme notre table est vide (elle ne contient aucune entrée), c'est la structure de la table (figure suivante) qui s'affichera dans les deux cas.
+
+Structure de la table news
+Structure de la table News
+Ce tableau vous rappelle de quels champs est constituée votre table : c'est sa structure. Notez que le champ id  contient un symbole de clé, car c'est la clé primaire de la table.
+
+Il n'y a rien de bien intéressant à faire ici, mais sachez qu'il est possible d'ajouter ou de supprimer des champs à tout moment. Ce n'est pas parce que votre table a été créée qu'elle est figée. Vous avez des options pour renommer les champs, les supprimer, en ajouter, etc.
+
+Jetez déjà un œil aux onglets du haut : « Structure », « Parcourir », « SQL », etc. Cela vous amènera vers différentes options que nous verrons plus loin. Nous allons commencer par nous intéresser à l'onglet « Insérer », qui va nous permettre d'ajouter des entrées à la table.
+
+Une page s'ouvre, dans laquelle vous pouvez entrer des valeurs pour chacun des champs. Cela va être pour nous l'occasion d'insérer notre première news, comme le suggère la figure suivante.
+
+Insertion d'un nouvel enregistrement
+Insertion d'un nouvel enregistrement
+Seule la colonne « Valeur » nous intéresse. Vous pouvez entrer une valeur pour chacun des trois champs. Vous remarquerez que je n'ai pas mis de valeur pour l'id : c'est normal, le numéro d'id est automatiquement calculé grâce à l'option auto_increment  . Ne vous en occupez pas et choisissez plutôt un titre, puis insérez un contenu. L'id de la première news sera 1, celui de la deuxième sera 2, etc.
+
+Les id ne doivent pas obligatoirement se suivre de 1 en 1. S'il n'y a pas de news n° 15, par exemple, cela ne pose aucun problème. Ce qui compte, c'est qu'il n'y ait pas deux news avec le même id. C'est d'ailleurs justement ce que permet d'éviter la clé primaire : elle interdit que deux entrées aient le même id.
+
+Une fois que vous avez inséré le texte que vous vouliez, cliquez sur le premier bouton « Exécuter » de la page.
+
+Il y a d'autres champs en dessous : ignorez-les. Ils vous permettent d'ajouter plusieurs entrées à la fois, mais nous n'en avons pas besoin.
+
+Recommencez une ou deux fois en faisant la même manipulation et en laissant le champ « id » vide.
+
+Affichez maintenant le contenu de la table. Vous pouvez cliquer soit sur l'onglet « Afficher », en haut, soit sur le nom de la table dans le menu à gauche. La figure suivante vous présente le contenu que vous devriez voir.
+
+Contenu de la table news
+Contenu de la table News
+Vous repérez ici les champs « id », « titre » et « contenu ». Cette table possède trois entrées, et comme vous pouvez le voir, MySQL a bien fait les choses puisque les numéros d'id se sont créés tout seuls.
+
+Vous pouvez modifier ou supprimer chacun des éléments que vous voyez à l'écran. Il y a beaucoup d'autres options en dessous, que je vous laisse regarder. Pour l'instant, ce qui compte, c'est que vous ayez compris la procédure pour ajouter des éléments à la table, et que vous soyez capable de lister son contenu.
+
+Mais… je ne vais pas devoir passer par phpMyAdmin à chaque fois que je veux ajouter ou supprimer un élément, quand même ? Il faudra passer par là pour ajouter chaque news de son site, mais aussi chaque membre, chaque message des forums ?
+
+Non, bien sûr que non. Comme son nom l'indique, phpMyAdmin est un outil d'administration. Il permet de voir rapidement la structure et le contenu de vos tables. Il est aussi possible d'ajouter ou de supprimer des éléments, comme on vient de le voir, mais on ne le fera que très rarement. Nous apprendrons à créer des pages en PHP qui insèrent ou suppriment des éléments directement depuis notre site web.
+
+Il nous reste encore à découvrir quelques-unes des fonctionnalités offertes par phpMyAdmin, et nous aurons terminé notre tour d'horizon de cet outil.
+
+Autres opérations
+Nous avons jusqu'ici découvert le rôle de trois onglets :
+
+Parcourir : affiche le contenu de la table ;
+
+Structure : présente la structure de la table (liste des champs) ;
+
+Insérer : permet d'insérer de nouvelles entrées dans la table.
+
+Je souhaite vous présenter d'autres onglets :
+
+SQL ;
+
+Importer ;
+
+Exporter ;
+
+Opérations ;
+
+Vider ;
+
+Supprimer.
+
+SQL
+Cliquez sur l'onglet « SQL ». La figure suivante s'affiche à l'écran.
+
+Écriture d'une requête SQL
+Écriture d'une requête SQL
+C'est ici que vous pouvez exécuter ce que l'on appelle des requêtes SQL pour demander à MySQL de faire quelque chose.
+
+C'est dans la grande zone de texte que vous pouvez taper ces requêtes. Par exemple, on nous propose ici :
+
+SELECT * FROM `news` WHERE 1
+Cela signifie : « Afficher tout le contenu de la table 'news' ». C'est justement ce langage SQL que nous allons découvrir tout au long des prochains chapitres.
+
+Importer
+Il y a aussi un onglet « Importer ».
+
+Onglet Importer
+Onglet Importer
+Dans la page qui s'affiche, vous pouvez envoyer un fichier de requêtes SQL (généralement un fichier .sql  ) à MySQL pour qu'il les exécute (figure suivante).
+
+Importer une table
+Importer une table
+Seul le premier champ en haut devrait nous intéresser : il nous permet d'indiquer un fichier sur notre disque dur, contenant des requêtes SQL à exécuter.
+Cliquez ensuite sur le bouton « Exécuter » tout en bas, sans vous préoccuper des autres champs.
+
+Quelle différence y a-t-il entre écrire la requête SQL (comme on vient de le voir juste avant) et envoyer un fichier contenant des requêtes SQL ?
+
+C'est la même chose, sauf que parfois, quand on doit envoyer un très grand nombre de requêtes, il est plus pratique d'utiliser un fichier. D'ailleurs, dans les prochains chapitres, je vous donnerai un fichier de requêtes à exécuter, et il faudra utiliser cette méthode.
+
+Exporter
+Nous nous intéressons maintenant à l'onglet « Exporter ». C'est ici que vous allez pouvoir récupérer votre base de données sur le disque dur, sous forme de fichier texte .sql  (qui contiendra des tonnes de requêtes SQL).
+
+Ce fichier que l'on va « exporter », est-ce que c'est le même que celui dont tu nous parlais tout à l'heure ? Celui situé par exemple dans C:\wamp\mysql\data ?
+
+Non, pas du tout. Ce que je vous ai montré tout à l'heure, c'était quelque chose d'illisible. Je vous avais dit qu'on n'y toucherait pas, je ne vous ai pas menti.
+
+Le fichier que vous allez obtenir grâce à « l'exportation » de phpMyAdmin, c'est un fichier qui dit à MySQL comment recréer votre base de données (avec des requêtes en langage SQL). Et ce fichier-là est tout à fait lisible.
+
+À quoi sert ce fichier ?
+
+On peut s'en servir pour deux choses :
+
+transmettre votre base de données sur Internet : pour le moment, votre base de données se trouve sur votre disque dur. Mais lorsque vous voudrez héberger votre site sur Internet, il faudra utiliser la base de données en ligne de votre hébergeur ! Le fichier .sql  que vous allez générer vous permettra de reconstruire la base de données grâce à l'outil d'importation de phpMyAdmin (en général, les hébergeurs proposent eux aussi phpMyAdmin, pour que vous puissiez effectuer facilement des opérations sur votre base en ligne) ;
+
+faire une copie de sauvegarde de la base de données : on ne sait jamais, si vous faites une bêtise ou si quelqu'un réussit à détruire toutes les informations sur votre site (dont la base de données), vous serez bien content d'avoir une copie de secours sur votre disque dur !
+
+Votre écran doit ressembler à la figure suivante.
+
+Exportation d'une table
+Exportation d'une table
+La méthode "Rapide" masque toutes les options détaillées. Choisissez "Personnalisée" pour pouvoir paramétrer l'export.
+
+Ne prenez pas peur devant toutes ces options ! Retenez juste que :
+
+il faut le plus souvent choisir "Enregistrer la sortie vers un fichier", sinon l'écran va juste nous afficher les requêtes SQL, ce qui ne nous servira à rien ;
+
+par défaut, l'export contient la structure de la table (les noms des champs et types...) ainsi que les données (chaque entrée de news, par exemple). Vous pouvez choisir d'exporter uniquement la structure ou uniquement les données si besoin ;
+
+pour les grosses tables avec beaucoup d'entrées, choisissez "Compression : gzippé" pour faire un fichier beaucoup plus compact. Ce sera plus rapide à télécharger et à envoyer ensuite.
+
+Pour faire une sauvegarde complète, il faut donc prendre la structure ET les données, ce qui est automatiquement le cas dans l'option "Rapide" par défaut.
+
+Pensez à cocher la case « Transmettre » en bas, sinon il ne se passera rien. À noter que vous pouvez demander une compression, ce qui est utile si votre table est très grosse.
+
+Cliquez sur « Exécuter ». On vous proposera alors de télécharger un fichier : c'est tout à fait normal. N'hésitez pas à regarder ce qu'il y a dans ce fichier : vous allez voir qu'il contient plusieurs requêtes SQL. C'est ce langage que je vais vous apprendre dans les chapitres qui suivent !
+
+Comment dois-je faire pour recréer la base de données sur mon site web ?
+
+Il faut aller sur le phpMyAdmin de votre hébergeur. Renseignez-vous pour en connaître l'adresse. Par exemple, chez Free c'est http://phpmyadmin.free.fr/phpMyAdmin  (il faudra indiquer vos login et mot de passe).
+
+Une fois dessus, rendez-vous dans l'onglet « Importer » qu'on a vu tout à l'heure. Cliquez sur « Parcourir » pour indiquer où se trouve le fichier SQL que vous venez de créer sur votre disque dur. Faites « Exécuter », attendez qu'il soit envoyé, et c'est bon ! Votre base de données est alors recréée sur Internet !
+
+Opérations
+Ici, vous pouvez effectuer diverses opérations sur votre table.
+Je ne vais pas les énumérer une à une, ni vous expliquer comment elles fonctionnent, vu que c'est très simple. Sachez simplement que vous pourriez avoir besoin de :
+
+changer le nom de la table : indiquez le nouveau nom pour cette table ;
+
+déplacer la table vers : si vous voulez placer cette table dans une autre base de données ;
+
+copier la table : faire une copie de la table, dans une autre base ou dans la même (attention : dans ce cas, il faudra qu'elle ait un nom différent) ;
+
+optimiser la table : à force d'utiliser une table, surtout si elle est grosse, on finit par avoir des « pertes » qui font que la table n'est plus bien organisée. Un clic là-dessus et hop ! c'est de nouveau arrangé ;
+
+vider la table : vide tout le contenu de la table. Toutes les entrées vont disparaître, seule la structure de la table restera (c'est-à-dire les champs). Attention, il n'est pas possible d'annuler cette opération ;
+
+supprimer la table : supprime la totalité de la table (structure et données). Là encore, réfléchissez-y à deux fois avant de tout supprimer, car vous ne pourrez rien récupérer par la suite, à moins d'avoir fait une sauvegarde au préalable avec l'outil d'exportation.
+
+En résumé
+phpMyAdmin est un outil qui nous permet de visualiser rapidement l'état de notre base de données et de la modifier, sans avoir à écrire de requêtes SQL.
+
+On crée généralement un champ nommé id  qui sert à numéroter les entrées d'une table. Ce champ doit avoir un index PRIMARY (on dit qu'on crée une clé primaire) et l'option AUTO_INCREMENT qui permet de laisser MySQL gérer la numérotation.
+
+MySQL gère différents types de données pour ses champs, à la manière de PHP. On trouve des types adaptés au stockage de nombres, de textes, de dates, etc.
+
+phpMyAdmin possède un outil d'importation et d'exportation des tables qui nous permettra notamment d'envoyer notre base de données sur Internet lorsque nous mettrons notre site en ligne.
