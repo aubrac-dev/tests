@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -8,7 +7,13 @@
 </head>
 
 <body>
-    <?php include 'req.php';?>
+    <?php include 'req.php'; ?>
+    <hr>
+    <?php include 'req_1.php'; ?>
+    <hr>
+    <?php include 'req_2.php'; ?>
+    <hr>
+    <?php include 'req_3.php'; ?>
 </body>
 
 </html>
