@@ -1,147 +1,173 @@
-Écrivez des données
+TP : un minichat
 
-Nous avons vu dans le chapitre précédent que l'on pouvait facilement récupérer des informations de notre base de données. Nous avons également pu constater que le langage SQL est très puissant car il propose de nombreux critères de sélection et de tri ( WHERE  , ORDER BY  , etc.).
+Voilà un TP qui va nous permettre de mettre en pratique tout ce que l'on vient d'apprendre sur le langage SQL. Il faut dire qu'on a enchaîné beaucoup de nouveautés dans les chapitres précédents : base de données, extraction des informations contenues dans une table, etc.
 
-Il est maintenant temps de découvrir comment on peut ajouter et modifier des données dans la base. Pour cela, nous allons aborder de nouvelles requêtes SQL fondamentales et qu'il vous faut connaître : INSERT  , UPDATE  et DELETE  .
+Avec les connaissances que vous avez maintenant, vous êtes en mesure de réaliser de vrais scripts qui pourront vous être utiles pour votre site, comme un minichat (ce qu'on va faire) ou encore un livre d'or, un système de news (ou blog), etc. Ces scripts sont en fait assez similaires, mais le plus simple d'entre eux est le minichat.
 
-INSERT : ajouter des données
-Votre mission, si vous l'acceptez : ajouter une nouvelle entrée à la table « jeux_video » sur laquelle nous avons travaillé dans le chapitre précédent.
+Ce dernier permettra d'ajouter facilement une touche de dynamisme à votre site… mais encore faut-il le construire. À nous de jouer !
 
-Mouahahahah, mais c'est facile. Tu utilises phpMyAdmin et hop ! c'est fait !
-… Quoi, j'ai dit quelque chose de mal ?
+Instructions pour réaliser le TP
+Pour préparer ce TP, nous allons voir les points suivants :
 
-Non, non.
-C'est vrai que phpMyAdmin permet d'ajouter de nouvelles entrées dans la table. Mais ce qui nous intéresse ici, c'est de le faire au moyen d'un script PHP et d'une requête SQL.
+prérequis ;
 
-Tout d'abord, je vous rappelle à quoi ressemble la table « jeux_video » :
+objectifs ;
+
+structure de la table MySQL ;
+
+structure des pages PHP ;
+
+rappel sur les consignes de sécurité.
+
+Prérequis
+Vous pourrez suivre ce TP sans problème si vous avez lu tous les chapitres précédents. Plus précisément, nous allons utiliser les notions suivantes :
+
+transmission de variables via un formulaire ;
+
+lire dans une table ;
+
+écrire dans une table ;
+
+utilisation de PDO et des requêtes préparées.
+
+Objectifs
+Qu'est-ce que je vous avais dit qu'il fallait absolument faire avant de commencer à attaquer notre script PHP ? Un brouillon !
+
+Eh oui, votre script ne va pas s'écrire tout seul, comme par magie, alors il va falloir réfléchir un petit peu avant de commencer. Il faut particulièrement se demander ce que l'on veut exactement faire.
+
+Quelles seront les fonctionnalités de mon minichat ?
+
+Ce sera quelque chose de basique pour commencer, mais rien ne vous empêchera de l'améliorer à votre sauce.
+
+On souhaite avoir, sur la même page et en haut, deux zones de texte : une pour écrire votre pseudo, une autre pour écrire votre petit message. Ensuite, un bouton « Envoyer » permettra d'envoyer les données à MySQL pour qu'il les enregistre dans une table.
+
+En dessous, le script devra afficher les 10 derniers messages qui ont été enregistrés, en allant du plus récent au plus ancien.
+
+C'est un peu flou ? O.K., regardez sur la figure suivante à quoi doit ressembler votre page PHP une fois terminée.
+Une fois que l'on sait ce que l'on veut obtenir, il nous est beaucoup plus facile de le réaliser ! Et ne rigolez pas, trop de gens se lancent dans un script sans vraiment savoir ce qu'ils veulent faire, ce qui les conduit bien souvent dans un mur.
+
+Aperçu du mini-chat une fois réalisé
+Aperçu du minichat une fois réalisé
+Structure de la table MySQL
+Comme à chaque fois que l'on se servira d'une base de données, on va commencer par étudier sa forme, c'est-à-dire la liste des champs qu'elle contient. Voici un petit tableau que j'ai réalisé en une minute sur une feuille de papier brouillon :
 
 ID
 
-nom
+pseudo
 
-possesseur
-
-console
-
-prix
-
-nbre_joueurs_max
-
-commentaires
+message
 
 1
 
-Super Mario Bros
+Tom
 
-Florent
-
-NES
-
-4
-
-1
-
-Un jeu d'anthologie !
+Il fait beau aujourd'hui, vous ne trouvez pas ?
 
 2
 
-Sonic
+John
 
-Patrick
-
-Mega Drive
-
-2
-
-1
-
-Pour moi, le meilleur jeu au monde !
+Ouais, ça faisait un moment qu'on n'avait pas vu la lumière du soleil !
 
 3
 
-Zelda : Ocarina of Time
+Patrice
 
-Florent
-
-Nintendo 64
-
-15
-
-1
-
-Un jeu grand, beau et complet, comme on en voit rarement de nos jours
+Ça vous tente d'aller à la plage aujourd'hui ? Y'a de super vagues !
 
 4
 
-Mario Kart 64
+Tom
 
-Florent
-
-Nintendo 64
-
-25
-
-4
-
-Un excellent jeu de kart !
+Cool, bonne idée ! J'amène ma planche !
 
 5
 
-Super Smash Bros Melee
+John
 
-Michel
+Comptez sur moi !
 
-GameCube
+On distingue les champs suivants :
 
-55
+ID  (type INT  ) : il nous permettra de savoir dans quel ordre ont été postés les messages. Il faudra le mettre en auto_increment  pour que les numéros s'écrivent tout seuls, et ne pas oublier de sélectionner « Primaire » (cela dit à MySQL que c'est le champ qui numérote les entrées) ;
 
-4
+pseudo  (type VARCHAR  ) : pensez à indiquer la taille maximale du champ (je vous conseille de mettre le maximum, « 255 ») ;
 
-Un jeu de baston délirant !
+message  (type VARCHAR  ) : de même, on indiquera une taille maximale de 255 caractères. Si vous pensez que vos messages seront plus longs, utilisez plutôt le type TEXT  , beaucoup moins limité.
 
-...
+Commencez donc par créer cette table dans votre base de données avec phpMyAdmin. Appelez-la comme vous voulez, moi j'ai choisi minichat  .
 
-...
+Structure des pages PHP
+Comme pour le TP « Page protégée par mot de passe », nous allons utiliser deux fichiers PHP :
 
-...
+minichat.php : contient le formulaire permettant d'ajouter un message, et liste les 10 derniers messages ;
 
-...
+minichat_post.php : insère le message reçu avec $_POST  dans la base de données, puis redirige vers minichat.php  .
 
-...
+Il aurait été possible de tout faire sur une seule page PHP, mais pour bien séparer le code, il est préférable d'utiliser deux fichiers, comme sur la figure suivante.
 
-...
-
-...
-
-La requête INSERT INTO  permet d'ajouter une entrée
-Pour ajouter une entrée, vous aurez besoin de connaître la requête SQL. En voici une par exemple qui ajoute un jeu :
-
-INSERT INTO jeux_video(ID, nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES('', 'Battlefield 1942', 'Patrick', 'PC', 45, 50, '2nde guerre mondiale')
-Les nombres (tels que 45 et 50, ici) n'ont pas besoin d'être entourés d'apostrophes. Seules les chaînes de caractères les nécessitent.
-
-Étudions un peu cette requête.
-
-D'abord, vous devez commencer par les mots-clés INSERT INTO  qui indiquent que vous voulez insérer une entrée.
-
-Vous précisez ensuite le nom de la table (ici jeux_video  ), puis listez entre parenthèses les noms des champs dans lesquels vous souhaitez placer des informations.
-
-Enfin – et c'est là qu'il ne faut pas se tromper – vous inscrivez VALUES  suivi des valeurs à insérer dans le même ordre que les champs que vous avez indiqués.
-
-Vous remarquerez que pour le premier champ (ID), j'ai laissé des apostrophes vides. C'est voulu : le champ a la propriété auto_increment  , MySQL mettra donc le numéro d'ID lui-même. On pourrait même se passer du champ ID dans la requête :
-
-INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES('Battlefield 1942', 'Patrick', 'PC', 45, 50, '2nde guerre mondiale')
-C'est encore plus simple ! Le champ ID sera de toute façon automatiquement rempli par MySQL, il est donc inutile de le lister.
-
-Enfin, si vous le désirez, sachez que vous n'êtes pas obligé de lister les noms des champs en premier ; cette requête marche tout aussi bien (mais elle est moins claire) :
-
-INSERT INTO jeux_video VALUES('', 'Battlefield 1942', 'Patrick', 'PC', 45, 50, 
-     '2nde guerre mondiale')
-Il faut lister les valeurs pour tous les champs sans exception (ID compris), dans le bon ordre.
-
-Application en PHP
-Utilisons cette requête SQL au sein d'un script PHP. Cette fois, au lieu de faire appel à query()  (que l'on utilisait dans le chapitre précédent pour récupérer des données), on va utiliser exec()  qui est prévue pour exécuter des modifications sur la base de données :
+Organisation des pages du mini-chat
+Organisation des pages du minichat
+Vous avez toutes les connaissances nécessaires pour réaliser un minichat basé sur la structure du schéma précédent… à l'exception de la redirection. En effet, il existe plusieurs moyens de rediriger le visiteur vers une autre page (via une balise <meta>  , par exemple), mais le plus propre et le plus rapide consiste à faire une redirection HTTP. Voici comment il faut procéder pour faire cela sur la page minichat_post.php :
 
 <?php
+// Effectuer ici la requête qui insère le message
+// Puis rediriger vers minichat.php comme ceci :
+header('Location: minichat.php');
+?>
+Le visiteur ne verra jamais la page minichat_post.php  . Celle-ci n'affiche rien, mais commande en revanche au navigateur du visiteur de retourner sur minichat.php  .
+
+La fonction header()  permet d'envoyer ce qu'on appelle des « en-têtes HTTP ». C'est le protocole qu'utilisent le serveur et le client pour échanger des pages web. Ici, on utilise une des possibilités de HTTP, qui commande une redirection via la commande Location  .
+Par rapport à d'autres types de redirection (comme la balise <meta>  ), cette technique a l'avantage d'être instantanée et transparente pour l'utilisateur. De plus, s'il rafraîchit ensuite la page minichat.php  , il ne risque pas d'avoir le message souvent gênant et déroutant : « Pour afficher cette page, les informations précédemment transmises doivent être renvoyées. Êtes-vous sûr de vouloir le faire ? ».
+
+Rappel sur les consignes de sécurité
+Un petit rappel ne peut pas faire de mal : ne faites jamais confiance aux données de l'utilisateur ! Tout ce qui vient de l'utilisateur doit être traité avec la plus grande méfiance.
+
+Ici, on a une page minichat_post.php  assez simple qui reçoit deux champs : le pseudo et le message. À priori, il n'y a pas de vérification supplémentaire à faire, si ce n'est qu'il faudra veiller, lors de l'affichage, à protéger les chaînes de caractères contre la faille XSS (celle qui permet d'insérer du HTML et du JavaScript dans la page). Il faudra donc bien veiller à appeler htmlspecialchars()  pour protéger les chaînes.
+
+À vous de jouer !
+Allez, j'en ai assez dit. C'est maintenant à votre tour de réfléchir. Avec les éléments que je vous ai donnés, et avec ce que vous avez appris dans les chapitres précédents, vous devez être capable de réaliser le minichat !
+
+Si vous avez un peu de mal, et si votre script ne marche pas, ne le supprimez pas dans un moment de rage (il ne faut jamais s'énerver). Faites une pause et revenez-y plus tard.
+
+Si vous coincez vraiment, vous pouvez demander de l'aide sur les forums ou regarder la correction pour vous aider. Faites l'effort dans tous les cas de travailler ce script ; ce sera très formateur, vous verrez !
+
+Correction
+Hop, hop, hop ! On relève les copies !
+
+Vous allez maintenant voir ce que j'attendais de vous. Si vous avez réussi à faire quelque chose qui marche, bravo !
+Et si vous n'y êtes pas arrivé, ne vous en faites pas trop : le principal est que vous ayez fait l'effort de réfléchir. En voyant la correction, vous apprendrez énormément de choses !
+
+Il y avait deux fichiers ; commençons par minichat.php  .
+
+minichat.php : formulaire et liste des derniers messages
+Cette page contient le formulaire d'ajout de message, ainsi que la liste des derniers messages.
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Mini-chat</title>
+    </head>
+    <style>
+    form
+    {
+        text-align:center;
+    }
+    </style>
+    <body>
+    
+    <form action="minichat_post.php" method="post">
+        <p>
+        <label for="pseudo">Pseudo</label> : <input type="text" name="pseudo" id="pseudo" /><br />
+        <label for="message">Message</label> :  <input type="text" name="message" id="message" /><br />
+
+        <input type="submit" value="Envoyer" />
+    </p>
+    </form>
+
+<?php
+// Connexion à la base de données
 try
 {
     $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
@@ -151,160 +177,70 @@ catch(Exception $e)
         die('Erreur : '.$e->getMessage());
 }
 
-// On ajoute une entrée dans la table jeux_video
-$bdd->exec('INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES(\'Battlefield 1942\', \'Patrick\', \'PC\', 45, 50, \'2nde guerre mondiale\')');
+// Récupération des 10 derniers messages
+$reponse = $bdd->query('SELECT pseudo, message FROM minichat ORDER BY ID DESC LIMIT 0, 10');
 
-echo 'Le jeu a bien été ajouté !';
+// Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
+while ($donnees = $reponse->fetch())
+{
+    echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
+}
+
+$reponse->closeCursor();
+
 ?>
-Que fait ce code ? Il ajoute une entrée dans la BDD pour le jeu « Battlefield 1942 », appartenant à « Patrick », qui fonctionne sur « PC », qui coûte 45 euros, etc.
+    </body>
+</html>
+Le code de cette page est séparé en deux parties :
 
-La présence de multiples apostrophes rend la requête un peu difficile à lire et à écrire à cause des antislashs \  que l'on doit ajouter devant. De plus, cette requête insère toujours les mêmes données. Comme on l'a vu dans le chapitre précédent, si on veut rendre une partie de la requête variable, le plus rapide et le plus sûr est de faire appel aux requêtes préparées.
+le formulaire (en HTML) ;
 
-Insertion de données variables grâce à une requête préparée
-Si on choisit d'utiliser une requête préparée (ce que je vous recommande si vous souhaitez insérer des variables), le fonctionnement est en fait exactement le même que dans le chapitre précédent :
+la liste des messages (affichée en PHP à l'aide d'une requête SQL).
+
+Il n'y avait pas de piège particulier, à l'exception du htmlspecialchars()  à ne pas oublier sur le message ET sur le pseudo. Toutes les données issues du formulaire doivent être protégées, pour éviter la faille XSS dont nous avons parlé dans un chapitre précédent.
+
+minichat_post.php : enregistrement et redirection
+La page minichat_post.php  reçoit les données du formulaire, enregistre le message et redirige ensuite le visiteur sur la liste des derniers messages.
 
 <?php
-$req = $bdd->prepare('INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES(:nom, :possesseur, :console, :prix, :nbre_joueurs_max, :commentaires)');
-$req->execute(array(
-    'nom' => $nom,
-    'possesseur' => $possesseur,
-    'console' => $console,
-    'prix' => $prix,
-    'nbre_joueurs_max' => $nbre_joueurs_max,
-    'commentaires' => $commentaires
-    ));
+// Connexion à la base de données
+try
+{
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
+}
+catch(Exception $e)
+{
+        die('Erreur : '.$e->getMessage());
+}
 
-echo 'Le jeu a bien été ajouté !';
+// Insertion du message à l'aide d'une requête préparée
+$req = $bdd->prepare('INSERT INTO minichat (pseudo, message) VALUES(?, ?)');
+$req->execute(array($_POST['pseudo'], $_POST['message']));
+
+// Redirection du visiteur vers la page du minichat
+header('Location: minichat.php');
 ?>
-Désormais, je ne mets plus l'étape de la connexion à MySQL avec PDO dans mes codes, pour les simplifier. Bien entendu, il faut toujours se connecter au préalable si on veut que la requête fonctionne.
+Ce code est relativement court et sans surprise. On se connecte à la base, on insère les données et on redirige le visiteur vers la page minichat.php  , comme on vient d'apprendre à le faire.
 
-Pour plus de clarté, j'ai utilisé ici des marqueurs nominatifs. Comme vous le voyez, j'ai créé l'array sur plusieurs lignes : c'est autorisé, et c'est surtout bien plus lisible.
+En fait, ce code peut être amélioré (je vais en parler un peu plus loin). En effet, on ne teste pas si le pseudo et le message existent bien, s'ils sont vides ou non, etc. Il est donc en théorie possible d'enregistrer des messages vides, ce qui idéalement ne devrait pas être autorisé.
 
-Les variables telles que $nom  et $possesseur  doivent avoir été définies précédemment. Généralement, on récupèrera des variables de $_POST  (issues d'un formulaire) pour insérer une entrée dans la base de données. Nous découvrirons un cas pratique dans le TP suivant.
+Le mini-chat
+Le minichat
+Aller plus loin
+Il serait dommage d'en rester là… Le script de minichat que je vous ai fait faire est certes amusant, mais je suis sûr que vous aimeriez l'améliorer !
 
-UPDATE : modifier des données
-Vous venez d'ajouter « Battlefield » dans la BDD et tout s'est bien passé.
-Mais… vous vous rendez compte avec stupeur que « Battlefield » se joue en fait à 32 joueurs maximum (au lieu de 50) et qu'en plus son prix a baissé : on le trouve à 10 euros (au lieu de 45).
+Cependant, je ne peux que vous donner des idées. Je ne peux pas vous proposer de correction pour chacune de ces idées, car ce serait beaucoup trop long.
+Mais ne vous en faites pas : si je vous propose de procéder à des améliorations, c'est que vous en êtes capable. Et puis, n'oubliez pas qu'il y a un forum sur le site : si jamais vous séchez un peu, n'hésitez pas à aller y demander de l'aide !
 
-La requête UPDATE  permet de modifier une entrée
-No problemo amigo !
-Avec une petite requête SQL, on peut arranger ça. En effet, en utilisant UPDATE  , vous allez pouvoir modifier l'entrée qui pose problème :
+Voici quelques idées pour améliorer le script.
 
-UPDATE jeux_video SET prix = 10, nbre_joueurs_max = 32 WHERE ID = 51
-Comment ça marche ?
+Retenir le pseudo. On doit actuellement saisir à nouveau son pseudo à chaque nouveau message. Comme vous le savez probablement, il est possible en HTML de préremplir un champ avec l'attribut value  . Par exemple :
 
-Tout d'abord, le mot-clé UPDATE  permet de dire qu'on va modifier une entrée.
+<input type="text" name="pseudo" value="M@teo21" />
+Remplacez M@teo21  par le pseudonyme du visiteur. Ce pseudonyme peut être issu d'un cookie, par exemple : lorsqu'il poste un message, vous inscrivez son pseudo dans un cookie, ce qui vous permet ensuite de préremplir le champ.
 
-Ensuite, le nom de la table ( jeux_video  ).
+Proposez d'actualiser le minichat. Le minichat ne s'actualise pas automatiquement s'il y a de nouveaux messages. C'est normal, ce serait difficile à faire à notre niveau. À la base, le Web n'a pas vraiment été prévu pour ce type d'application. En revanche, ce que vous pouvez facilement faire, c'est proposer un lien « Rafraîchir » qui charge à nouveau la page minichat.php  . Ainsi, s'il y a de nouveaux messages, ils apparaîtront après un clic sur le lien.
 
-Le mot-clé SET  , qui sépare le nom de la table de la liste des champs à modifier.
+Afficher les anciens messages. On ne voit actuellement que les 10 derniers messages. Sauriez-vous trouver un moyen d'afficher les anciens messages ? Bien sûr, les afficher tous d'un coup sur la même page n'est pas une bonne idée. Vous pourriez imaginer un paramètre $_GET['page']  qui permettrait de choisir le numéro de page des messages à afficher.
 
-Viennent ensuite les champs qu'il faut modifier, séparés par des virgules. Ici, on modifie le champ « prix », on lui affecte la valeur « 10 » ( prix = 10  ), puis on fait de même pour le champ nbre_joueurs_max  . Les autres champs ne seront pas modifiés.
-
-Enfin, le mot-clé WHERE  est tout simplement indispensable. Il nous permet de dire à MySQL quelle entrée il doit modifier (sinon, toutes les entrées seraient affectées !). On se base très souvent sur le champ ID pour indiquer quelle entrée doit être modifiée. Ici, on suppose que « Battlefield » a été enregistré sous l'ID n° 51.
-
-Si vous voulez, vous pouvez vous baser sur le nom du jeu au lieu de l'ID pour effectuer votre sélection :
-
-UPDATE jeux_video SET prix = '10', nbre_joueurs_max = '32' WHERE nom = 'Battlefield 1942'
-Dernière minute ! Florent vient de racheter tous les jeux de Michel. Il va falloir modifier ça tout de suite.
-
-Euh, il va falloir modifier chaque entrée une à une ?
-
-Non ! Il n'est pas question de passer des heures à modifier chaque entrée une à une pour ça ! En réfléchissant environ 0,5 seconde, vous allez trouver tout seul la requête SQL qui permet de faire ce qu'on souhaite.
-
-C'est bon, vous avez trouvé ? Allez, je vous donne la réponse dans le mille :
-
-UPDATE jeux_video SET possesseur = 'Florent' WHERE possesseur = 'Michel'
-Traduction : « Dans la table jeux_video  , modifier toutes les entrées dont le champ possesseur  est égal à Michel, et le remplacer par Florent. »
-
-Qu'il y ait 1, 10, 100 ou 1 000 entrées, cette requête à elle seule suffit pour mettre à jour toute la table ! Si c'est pas beau, le SQL… ;-)
-
-Application en PHP
-De la même manière, en PHP on fait appel à exec()  pour effectuer des modifications :
-
-<?php
-$bdd->exec('UPDATE jeux_video SET prix = 10, nbre_joueurs_max = 32 WHERE nom = \'Battlefield 1942\'');
-?>
-Notez que cet appel renvoie le nombre de lignes modifiées. Essayez de récupérer cette valeur dans une variable et de l'afficher, par exemple comme ceci :
-
-<?php
-$nb_modifs = $bdd->exec('UPDATE jeux_video SET possesseur = \'Florent\' WHERE possesseur = \'Michel\'');
-echo $nb_modifs . ' entrées ont été modifiées !';
-?>
-Cela affichera quelque chose comme : 13 entrées ont été modifiées !
-
-Avec une requête préparée
-Si vous insérez des données variables, par exemple envoyées par l'utilisateur, je vous recommande là encore de faire appel à une requête préparée :
-
-<?php
-$req = $bdd->prepare('UPDATE jeux_video SET prix = :nvprix, nbre_joueurs_max = :nv_nb_joueurs WHERE nom = :nom_jeu');
-$req->execute(array(
-    'nvprix' => $nvprix,
-    'nv_nb_joueurs' => $nv_nb_joueurs,
-    'nom_jeu' => $nom_jeu
-    ));
-?>
-DELETE : supprimer des données
-Enfin, voilà une dernière requête qui pourra se révéler utile : DELETE  . Rapide et simple à utiliser, elle est quand même un poil dangereuse : après suppression, il n'y a aucun moyen de récupérer les données, alors faites bien attention !
-
-Voici comment on supprime par exemple l'entrée de « Battlefield » :
-
-DELETE FROM jeux_video WHERE nom='Battlefield 1942'
-Il n'y a rien de plus facile :
-
-DELETE FROM : pour dire « supprimer dans » ;
-
-jeux_video : le nom de la table ;
-
-WHERE : indispensable pour indiquer quelle(s) entrée(s) doi(ven)t être supprimée(s).
-
-Si vous oubliez le WHERE  , toutes les entrées seront supprimées. Cela équivaut à vider la table.
-
-Je vous laisse essayer cette requête en PHP. Vous pouvez là encore passer par exec()  si vous voulez exécuter une requête bien précise, ou bien utiliser une requête préparée si votre requête dépend de variables.
-
-Traiter les erreurs SQL
-Comme vous le savez, le langage SQL est un langage à part entière dont on se sert en PHP. S'il peut y avoir des erreurs en PHP, il peut aussi y avoir des erreurs en SQL !
-Il se peut par exemple que votre requête soit mal écrite, que la table que vous voulez ouvrir n'existe pas, etc. Bref, les erreurs possibles sont là encore nombreuses.
-
-Toutefois, ce n'est pas MySQL qui vous dira qu'il y a une erreur, mais PHP, et ce dernier n'est pas très bavard en ce qui concerne les erreurs SQL. Nous allons donc voir :
-
-Comment repérer une erreur SQL en PHP.
-
-Comment faire parler PHP pour qu'il nous donne l'erreur SQL (de gré, ou de force !).
-
-Repérer l'erreur SQL en PHP
-Lorsqu'il s'est produit une erreur SQL, la page affiche le plus souvent l'erreur suivante :
-
-Fatal error: Call to a member function fetch() on a non-object
-
-Cette erreur survient lorsque vous voulez afficher les résultats de votre requête, généralement dans la boucle  while ($donnees = $reponse->fetch())  .
-
-Quand vous avez cette erreur, il ne faut pas chercher plus loin, c'est la requête SQL qui précède qui n'a pas fonctionné. Il vous manque cependant des détails sur ce qui a posé problème dans la requête. Nous allons maintenant voir comment on peut remédier à cela. ;)
-
-Allez ! Crache le morceau !
-Comme visiblement PHP n'a pas envie de nous donner l'erreur renvoyée par MySQL, on va le lui demander d'une autre manière. Je vous avais d'ailleurs présenté cette méthode dans un des premiers chapitres sur MySQL.
-
-Repérez la requête qui selon vous plante (certainement celle juste avant la boucle  while  ), et demandez d'afficher l'erreur s'il y en a une, comme ceci :
-
-<?php
-$reponse = $bdd->query('SELECT nom FROM jeux_video') or die(print_r($bdd->errorInfo()));
-Si la requête fonctionne, aucune erreur ne sera affichée. Si en revanche la requête plante, PHP arrêtera de générer la page et vous affichera l'erreur donnée par MySQL…
-
-À partir de là, il va falloir vous débrouiller tout seul, car les erreurs SQL sont assez nombreuses et je ne peux pas toutes les lister.
-
-En général, MySQL vous dit « You have an error in your SQL syntax near 'XXX' ». À vous de bien relire votre requête SQL ; l'erreur se trouve généralement près de l'endroit où on vous l'indique.
-
-En résumé
-On utilise différents mots-clés en fonction du type de modification que l'on souhaite effectuer :
-
-INSERT INTO : ajout d'une entrée ;
-
-UPDATE : modification d'une ou plusieurs entrées ;
-
-DELETE : suppression d'une ou plusieurs entrées.
-
-Comme pour la sélection de données, on utilise les requêtes préparées pour personnaliser nos requêtes en fonction de variables.
-
-Lorsqu'on utilise UPDATE  ou DELETE  , il faut penser à filtrer avec un WHERE  , sinon toute la table sera affectée par l'opération !
-
-PHP indique si une erreur avec MySQL est intervenue.
+Au travail !
