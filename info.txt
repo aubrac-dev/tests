@@ -1,277 +1,310 @@
-phpMyAdmin
+Écrivez des données
 
-Nous allons maintenant faire des manipulations sur une base de données. Vous allez « voir » ce que peuvent contenir une base et ses tables.
+Nous avons vu dans le chapitre précédent que l'on pouvait facilement récupérer des informations de notre base de données. Nous avons également pu constater que le langage SQL est très puissant car il propose de nombreux critères de sélection et de tri ( WHERE  , ORDER BY  , etc.).
 
-Il existe plusieurs façons d'accéder à sa base de données et d'y faire des modifications. On peut utiliser une ligne de commande (console), exécuter les requêtes en PHP ou faire appel à un programme qui nous permet d'avoir rapidement une vue d'ensemble. Ici, je vous propose de découvrir phpMyAdmin, un des outils les plus connus permettant de manipuler une base de données MySQL.
+Il est maintenant temps de découvrir comment on peut ajouter et modifier des données dans la base. Pour cela, nous allons aborder de nouvelles requêtes SQL fondamentales et qu'il vous faut connaître : INSERT  , UPDATE  et DELETE  .
 
-phpMyAdmin est livré avec MAMP et XAMPP ; vous allez donc pouvoir vous en servir tout de suite. Presque tous les hébergeurs permettent d'utiliser phpMyAdmin ; renseignez-vous auprès du vôtre pour savoir comment y accéder.
+INSERT : ajouter des données
+Votre mission, si vous l'acceptez : ajouter une nouvelle entrée à la table « jeux_video » sur laquelle nous avons travaillé dans le chapitre précédent.
 
-Créer une table
-La première chose que je vous demande de faire, c'est d'ouvrir phpMyAdmin. Sous MAMP par exemple, ouvrez la page d'accueil WebStart de MAMP, puis allez dans le menu Outils (Tools) / phpMyAdmin.
+Mouahahahah, mais c'est facile. Tu utilises phpMyAdmin et hop ! c'est fait !
+… Quoi, j'ai dit quelque chose de mal ?
 
-phpMyAdmin n'est pas un programme mais un ensemble de pages PHP toutes prêtes, dont on se sert pour gagner du temps.
-On commence donc simplement : dans ce chapitre, nous ne coderons pas pour le moment ; nous allons simplement le manipuler.
+Non, non.
+C'est vrai que phpMyAdmin permet d'ajouter de nouvelles entrées dans la table. Mais ce qui nous intéresse ici, c'est de le faire au moyen d'un script PHP et d'une requête SQL.
 
-L'accueil de phpMyAdmin ressemble à la figure suivante.
+Tout d'abord, je vous rappelle à quoi ressemble la table « jeux_video » :
 
-Accueil de phpMyAdmin
-Accueil de phpMyAdmin
-Vous pouvez remarquer deux endroits importants, signalés par des numéros sur ma capture d'écran.
+ID
 
-Liste des bases : c'est la liste de vos bases de données. Sur ma capture d'écran, on a donc plusieurs bases : information_schema  , mysql  , performance_schema  et  sys .
+nom
 
-Créer une base : pour créer une nouvelle base de données, cliquez sur "Nouvelle base de données", entrez un nom dans le champ de formulaire qui apparaît à droite, cliquez sur « Créer » et hop ! c'est fait.
+possesseur
 
-Ne touchez pas aux bases de données qui existent déjà, elles servent au fonctionnement interne de MySQL.
+console
 
-Nous allons maintenant créer une nouvelle base test dans laquelle nous travaillerons tout le temps par la suite. Utilisez le formulaire à droite pour créer cette base : entrez le nom  test  et cliquez sur le bouton Créer  .
+prix
 
-L'écran de la figure suivante devrait alors s'afficher si la base a bien été créée.
+nbre_joueurs_max
 
-La base de test a été créée, vide
-La base de test a été créée, vide
-On vous indique qu'aucune table n'a été trouvée dans la base. Et si on en créait une ?
+commentaires
 
-Dans le champ « Créer une nouvelle table sur la base test », entrez le nom news et le nombre de colonnes 3  , comme vous le montre la figure suivante.
+1
 
-Créer une table
-Créer une table
-Cliquez sur « Exécuter ».
+Super Mario Bros
 
-La table n'est pas immédiatement créée : il faut maintenant indiquer le nom des champs, et les données qu'ils peuvent contenir. Je vous propose de faire simple, car pour l'instant on cherche juste à tester phpMyAdmin. Pour cette table, on va créer les trois champs suivants :
+Florent
 
-id : comme bien souvent, vous allez devoir créer un champ appelé id  (prononcez à l'anglaise « aille di »). C'est le numéro d'identification. Grâce à lui, toutes vos entrées seront numérotées, ce qui est bien pratique. Il y aura ainsi les news n° 1, n° 2, n° 3, etc. ;
+NES
 
-titre : ce champ contiendra le titre de la news ;
+4
 
-contenu : enfin, ce champ contiendra la news elle-même.
+1
 
-Soyons clairs : je ne suis pas en train de vous apprendre à créer un système de news pour votre site. Nous aurons l'occasion d'y travailler un peu plus tard. Pour le moment, nous cherchons seulement à découvrir le fonctionnement de phpMyAdmin.
+Un jeu d'anthologie !
 
-Vous devriez avoir la figure suivante sous les yeux.
+2
 
-Création d'une table MySQL
-Création d'une table MySQL
-Chaque colonne représente un champ. Nous avons demandé trois champs, il y a donc trois colonnes.
+Sonic
 
-phpMyAdmin vous demande beaucoup d'informations ; mais rassurez-vous, il n'est pas nécessaire de tout remplir. La plupart du temps, les sections les plus intéressantes seront :
+Patrick
 
-Champ : permet de définir le nom du champ (très important !) ;
+Mega Drive
 
-Type : le type de données que va stocker le champ (nombre entier, texte, date…) ;
+2
 
-Taille/Valeurs : permet d'indiquer la taille maximale du champ, utile pour le type VARCHAR  notamment, afin de limiter le nombre de caractères autorisés ;
+1
 
-Index : active l'indexation du champ. Ce mot barbare signifie dans les grandes lignes que votre champ sera adapté aux recherches. Le plus souvent, on utilise l'index PRIMARY  sur les champs de type id ;
+Pour moi, le meilleur jeu au monde !
 
-AUTO_INCREMENT : permet au champ de s'incrémenter tout seul à chaque nouvelle entrée. On l'utilise fréquemment sur les champs de type id  .
+3
 
-Je vous propose de remplir le formulaire comme je l'ai fait. Veillez à bien cocher AUTO_INCREMENT  et à définir un index PRIMARY sur le champ id  .
+Zelda : Ocarina of Time
 
-Une fois que c'est fait, cliquez sur le bouton Enregistrer en bas de la page. Votre table est créée !
+Florent
 
-Avant d'aller plus loin, je voudrais revenir un peu plus en détail sur les types de champs et les index, notamment l'index PRIMARY  qu'on a utilisé.
+Nintendo 64
 
-Les types de champs MySQL
-Si vous déroulez la liste des types que vous propose MySQL, vous devriez tomber à la renverse, comme l'illustre la figure suivante.
+15
 
-Types de données MySQL
-Types de données MySQL
-Alors que PHP ne propose que quelques types de données que l'on connaît bien maintenant ( int  , string  , bool  …), MySQL propose une quantité très importante de types de données.
+1
 
-En fait, ceux-ci sont classés par catégories.
+Un jeu grand, beau et complet, comme on en voit rarement de nos jours
 
-NUMERIC : ce sont les nombres. On y trouve des types dédiés aux petits nombres entiers ( TINYINT  ), aux gros nombres entiers ( BIGINT  ), aux nombres décimaux, etc.
+4
 
-DATE and TIME : ce sont les dates et les heures. De nombreux types différents permettent de stocker une date, une heure, ou les deux à la fois.
+Mario Kart 64
 
-STRING : ce sont les chaînes de caractères. Là encore, il y a des types adaptés à toutes les tailles.
+Florent
 
-SPATIAL : cela concerne les bases de données spatiales, utiles pour ceux qui font de la cartographie. Ce ne sera pas notre cas, donc nous n'en parlerons pas ici.
+Nintendo 64
 
-En fait, phpMyAdmin a eu la bonne idée de proposer au tout début de cette liste les quatre types de données les plus courants :
+25
 
-INT : nombre entier ;
+4
 
-VARCHAR : texte court (entre 1 et 255 caractères) ;
+Un excellent jeu de kart !
 
-TEXT : long texte (on peut y stocker un roman sans problème) ;
+5
 
-DATE : date (jour, mois, année).
+Super Smash Bros Melee
 
-Nous n'aurons besoin de jongler qu'entre ces quatre types, donc ce sont eux qu'il faut retenir. Cela couvrira 99 % de nos besoins.
+Michel
 
-Une petite remarque à propos de VARCHAR : c'est un type adapté aux textes courts, comme le titre d'une news de votre site. Sa seule exigence est que vous devez indiquer la taille maximale du champ (entre 1 et 255). Si vous ne le faites pas, vous ne pourrez pas créer la table. Si vous ne savez pas à combien limiter votre champ, vous pouvez mettre la valeur maximale (255), comme je l'ai fait dans l'exemple précédent.
+GameCube
 
-Les clés primaires
-Toute table doit posséder un champ qui joue le rôle de clé primaire. La clé primaire permet d'identifier de manière unique une entrée dans la table. En général, on utilise le champ id comme clé primaire, comme on vient de le faire.
+55
 
-Chaque news de votre site doit pouvoir être identifiée de manière unique. Le moyen le plus simple pour cela est de lui donner un numéro unique, dans un champ nommé « id ». Il ne peut pas y avoir deux news avec le même id ! Il en irait de même pour les autres tables de votre site : par exemple, chaque membre doit se voir attribuer un numéro unique. Si deux membres ont le même numéro, on ne pourra pas les différencier !
+4
 
-Il est vital que chaque table possède sa clé primaire. On ne vous interdira pas de créer des tables sans clé primaire, mais leurs performances seront extrêmement réduites. Je vous conseille donc de prendre le réflexe de créer à chaque fois ce champ « id » en lui donnant l'index PRIMARY  , ce qui aura pour effet d'en faire une clé primaire. Vous en profiterez en général pour cocher la case AUTO_INCREMENT  afin que ce champ gère lui-même les nouvelles valeurs automatiquement (1, 2, 3, 4…).
+Un jeu de baston délirant !
 
-Modifier une table
-À gauche de votre écran, la table « news » que vous venez de créer devient visible, telle que vous la voyez sur la figure suivante.
+...
 
-Liste des tables
-Liste des tables
-Si vous cliquez sur le mot « news », le contenu de la table s'affiche à droite de l'écran.
+...
 
-Si vous cliquez sur la petite image de tableau à gauche, phpMyAdmin vous présentera la structure de la table.
+...
 
-Actuellement, comme notre table est vide (elle ne contient aucune entrée), c'est la structure de la table (figure suivante) qui s'affichera dans les deux cas.
+...
 
-Structure de la table news
-Structure de la table News
-Ce tableau vous rappelle de quels champs est constituée votre table : c'est sa structure. Notez que le champ id  contient un symbole de clé, car c'est la clé primaire de la table.
+...
 
-Il n'y a rien de bien intéressant à faire ici, mais sachez qu'il est possible d'ajouter ou de supprimer des champs à tout moment. Ce n'est pas parce que votre table a été créée qu'elle est figée. Vous avez des options pour renommer les champs, les supprimer, en ajouter, etc.
+...
 
-Jetez déjà un œil aux onglets du haut : « Structure », « Parcourir », « SQL », etc. Cela vous amènera vers différentes options que nous verrons plus loin. Nous allons commencer par nous intéresser à l'onglet « Insérer », qui va nous permettre d'ajouter des entrées à la table.
+...
 
-Une page s'ouvre, dans laquelle vous pouvez entrer des valeurs pour chacun des champs. Cela va être pour nous l'occasion d'insérer notre première news, comme le suggère la figure suivante.
+La requête INSERT INTO  permet d'ajouter une entrée
+Pour ajouter une entrée, vous aurez besoin de connaître la requête SQL. En voici une par exemple qui ajoute un jeu :
 
-Insertion d'un nouvel enregistrement
-Insertion d'un nouvel enregistrement
-Seule la colonne « Valeur » nous intéresse. Vous pouvez entrer une valeur pour chacun des trois champs. Vous remarquerez que je n'ai pas mis de valeur pour l'id : c'est normal, le numéro d'id est automatiquement calculé grâce à l'option auto_increment  . Ne vous en occupez pas et choisissez plutôt un titre, puis insérez un contenu. L'id de la première news sera 1, celui de la deuxième sera 2, etc.
+INSERT INTO jeux_video(ID, nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES('', 'Battlefield 1942', 'Patrick', 'PC', 45, 50, '2nde guerre mondiale')
+Les nombres (tels que 45 et 50, ici) n'ont pas besoin d'être entourés d'apostrophes. Seules les chaînes de caractères les nécessitent.
 
-Les id ne doivent pas obligatoirement se suivre de 1 en 1. S'il n'y a pas de news n° 15, par exemple, cela ne pose aucun problème. Ce qui compte, c'est qu'il n'y ait pas deux news avec le même id. C'est d'ailleurs justement ce que permet d'éviter la clé primaire : elle interdit que deux entrées aient le même id.
+Étudions un peu cette requête.
 
-Une fois que vous avez inséré le texte que vous vouliez, cliquez sur le premier bouton « Exécuter » de la page.
+D'abord, vous devez commencer par les mots-clés INSERT INTO  qui indiquent que vous voulez insérer une entrée.
 
-Il y a d'autres champs en dessous : ignorez-les. Ils vous permettent d'ajouter plusieurs entrées à la fois, mais nous n'en avons pas besoin.
+Vous précisez ensuite le nom de la table (ici jeux_video  ), puis listez entre parenthèses les noms des champs dans lesquels vous souhaitez placer des informations.
 
-Recommencez une ou deux fois en faisant la même manipulation et en laissant le champ « id » vide.
+Enfin – et c'est là qu'il ne faut pas se tromper – vous inscrivez VALUES  suivi des valeurs à insérer dans le même ordre que les champs que vous avez indiqués.
 
-Affichez maintenant le contenu de la table. Vous pouvez cliquer soit sur l'onglet « Afficher », en haut, soit sur le nom de la table dans le menu à gauche. La figure suivante vous présente le contenu que vous devriez voir.
+Vous remarquerez que pour le premier champ (ID), j'ai laissé des apostrophes vides. C'est voulu : le champ a la propriété auto_increment  , MySQL mettra donc le numéro d'ID lui-même. On pourrait même se passer du champ ID dans la requête :
 
-Contenu de la table news
-Contenu de la table News
-Vous repérez ici les champs « id », « titre » et « contenu ». Cette table possède trois entrées, et comme vous pouvez le voir, MySQL a bien fait les choses puisque les numéros d'id se sont créés tout seuls.
+INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES('Battlefield 1942', 'Patrick', 'PC', 45, 50, '2nde guerre mondiale')
+C'est encore plus simple ! Le champ ID sera de toute façon automatiquement rempli par MySQL, il est donc inutile de le lister.
 
-Vous pouvez modifier ou supprimer chacun des éléments que vous voyez à l'écran. Il y a beaucoup d'autres options en dessous, que je vous laisse regarder. Pour l'instant, ce qui compte, c'est que vous ayez compris la procédure pour ajouter des éléments à la table, et que vous soyez capable de lister son contenu.
+Enfin, si vous le désirez, sachez que vous n'êtes pas obligé de lister les noms des champs en premier ; cette requête marche tout aussi bien (mais elle est moins claire) :
 
-Mais… je ne vais pas devoir passer par phpMyAdmin à chaque fois que je veux ajouter ou supprimer un élément, quand même ? Il faudra passer par là pour ajouter chaque news de son site, mais aussi chaque membre, chaque message des forums ?
+INSERT INTO jeux_video VALUES('', 'Battlefield 1942', 'Patrick', 'PC', 45, 50, 
+     '2nde guerre mondiale')
+Il faut lister les valeurs pour tous les champs sans exception (ID compris), dans le bon ordre.
 
-Non, bien sûr que non. Comme son nom l'indique, phpMyAdmin est un outil d'administration. Il permet de voir rapidement la structure et le contenu de vos tables. Il est aussi possible d'ajouter ou de supprimer des éléments, comme on vient de le voir, mais on ne le fera que très rarement. Nous apprendrons à créer des pages en PHP qui insèrent ou suppriment des éléments directement depuis notre site web.
+Application en PHP
+Utilisons cette requête SQL au sein d'un script PHP. Cette fois, au lieu de faire appel à query()  (que l'on utilisait dans le chapitre précédent pour récupérer des données), on va utiliser exec()  qui est prévue pour exécuter des modifications sur la base de données :
 
-Il nous reste encore à découvrir quelques-unes des fonctionnalités offertes par phpMyAdmin, et nous aurons terminé notre tour d'horizon de cet outil.
+<?php
+try
+{
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
+}
+catch(Exception $e)
+{
+        die('Erreur : '.$e->getMessage());
+}
 
-Autres opérations
-Nous avons jusqu'ici découvert le rôle de trois onglets :
+// On ajoute une entrée dans la table jeux_video
+$bdd->exec('INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES(\'Battlefield 1942\', \'Patrick\', \'PC\', 45, 50, \'2nde guerre mondiale\')');
 
-Parcourir : affiche le contenu de la table ;
+echo 'Le jeu a bien été ajouté !';
+?>
+Que fait ce code ? Il ajoute une entrée dans la BDD pour le jeu « Battlefield 1942 », appartenant à « Patrick », qui fonctionne sur « PC », qui coûte 45 euros, etc.
 
-Structure : présente la structure de la table (liste des champs) ;
+La présence de multiples apostrophes rend la requête un peu difficile à lire et à écrire à cause des antislashs \  que l'on doit ajouter devant. De plus, cette requête insère toujours les mêmes données. Comme on l'a vu dans le chapitre précédent, si on veut rendre une partie de la requête variable, le plus rapide et le plus sûr est de faire appel aux requêtes préparées.
 
-Insérer : permet d'insérer de nouvelles entrées dans la table.
+Insertion de données variables grâce à une requête préparée
+Si on choisit d'utiliser une requête préparée (ce que je vous recommande si vous souhaitez insérer des variables), le fonctionnement est en fait exactement le même que dans le chapitre précédent :
 
-Je souhaite vous présenter d'autres onglets :
+<?php
+$req = $bdd->prepare('INSERT INTO jeux_video(nom, possesseur, console, prix, nbre_joueurs_max, commentaires) VALUES(:nom, :possesseur, :console, :prix, :nbre_joueurs_max, :commentaires)');
+$req->execute(array(
+    'nom' => $nom,
+    'possesseur' => $possesseur,
+    'console' => $console,
+    'prix' => $prix,
+    'nbre_joueurs_max' => $nbre_joueurs_max,
+    'commentaires' => $commentaires
+    ));
 
-SQL ;
+echo 'Le jeu a bien été ajouté !';
+?>
+Désormais, je ne mets plus l'étape de la connexion à MySQL avec PDO dans mes codes, pour les simplifier. Bien entendu, il faut toujours se connecter au préalable si on veut que la requête fonctionne.
 
-Importer ;
+Pour plus de clarté, j'ai utilisé ici des marqueurs nominatifs. Comme vous le voyez, j'ai créé l'array sur plusieurs lignes : c'est autorisé, et c'est surtout bien plus lisible.
 
-Exporter ;
+Les variables telles que $nom  et $possesseur  doivent avoir été définies précédemment. Généralement, on récupèrera des variables de $_POST  (issues d'un formulaire) pour insérer une entrée dans la base de données. Nous découvrirons un cas pratique dans le TP suivant.
 
-Opérations ;
+UPDATE : modifier des données
+Vous venez d'ajouter « Battlefield » dans la BDD et tout s'est bien passé.
+Mais… vous vous rendez compte avec stupeur que « Battlefield » se joue en fait à 32 joueurs maximum (au lieu de 50) et qu'en plus son prix a baissé : on le trouve à 10 euros (au lieu de 45).
 
-Vider ;
+La requête UPDATE  permet de modifier une entrée
+No problemo amigo !
+Avec une petite requête SQL, on peut arranger ça. En effet, en utilisant UPDATE  , vous allez pouvoir modifier l'entrée qui pose problème :
 
-Supprimer.
+UPDATE jeux_video SET prix = 10, nbre_joueurs_max = 32 WHERE ID = 51
+Comment ça marche ?
 
-SQL
-Cliquez sur l'onglet « SQL ». La figure suivante s'affiche à l'écran.
+Tout d'abord, le mot-clé UPDATE  permet de dire qu'on va modifier une entrée.
 
-Écriture d'une requête SQL
-Écriture d'une requête SQL
-C'est ici que vous pouvez exécuter ce que l'on appelle des requêtes SQL pour demander à MySQL de faire quelque chose.
+Ensuite, le nom de la table ( jeux_video  ).
 
-C'est dans la grande zone de texte que vous pouvez taper ces requêtes. Par exemple, on nous propose ici :
+Le mot-clé SET  , qui sépare le nom de la table de la liste des champs à modifier.
 
-SELECT * FROM `news` WHERE 1
-Cela signifie : « Afficher tout le contenu de la table 'news' ». C'est justement ce langage SQL que nous allons découvrir tout au long des prochains chapitres.
+Viennent ensuite les champs qu'il faut modifier, séparés par des virgules. Ici, on modifie le champ « prix », on lui affecte la valeur « 10 » ( prix = 10  ), puis on fait de même pour le champ nbre_joueurs_max  . Les autres champs ne seront pas modifiés.
 
-Importer
-Il y a aussi un onglet « Importer ».
+Enfin, le mot-clé WHERE  est tout simplement indispensable. Il nous permet de dire à MySQL quelle entrée il doit modifier (sinon, toutes les entrées seraient affectées !). On se base très souvent sur le champ ID pour indiquer quelle entrée doit être modifiée. Ici, on suppose que « Battlefield » a été enregistré sous l'ID n° 51.
 
-Onglet Importer
-Onglet Importer
-Dans la page qui s'affiche, vous pouvez envoyer un fichier de requêtes SQL (généralement un fichier .sql  ) à MySQL pour qu'il les exécute (figure suivante).
+Si vous voulez, vous pouvez vous baser sur le nom du jeu au lieu de l'ID pour effectuer votre sélection :
 
-Importer une table
-Importer une table
-Seul le premier champ en haut devrait nous intéresser : il nous permet d'indiquer un fichier sur notre disque dur, contenant des requêtes SQL à exécuter.
-Cliquez ensuite sur le bouton « Exécuter » tout en bas, sans vous préoccuper des autres champs.
+UPDATE jeux_video SET prix = '10', nbre_joueurs_max = '32' WHERE nom = 'Battlefield 1942'
+Dernière minute ! Florent vient de racheter tous les jeux de Michel. Il va falloir modifier ça tout de suite.
 
-Quelle différence y a-t-il entre écrire la requête SQL (comme on vient de le voir juste avant) et envoyer un fichier contenant des requêtes SQL ?
+Euh, il va falloir modifier chaque entrée une à une ?
 
-C'est la même chose, sauf que parfois, quand on doit envoyer un très grand nombre de requêtes, il est plus pratique d'utiliser un fichier. D'ailleurs, dans les prochains chapitres, je vous donnerai un fichier de requêtes à exécuter, et il faudra utiliser cette méthode.
+Non ! Il n'est pas question de passer des heures à modifier chaque entrée une à une pour ça ! En réfléchissant environ 0,5 seconde, vous allez trouver tout seul la requête SQL qui permet de faire ce qu'on souhaite.
 
-Exporter
-Nous nous intéressons maintenant à l'onglet « Exporter ». C'est ici que vous allez pouvoir récupérer votre base de données sur le disque dur, sous forme de fichier texte .sql  (qui contiendra des tonnes de requêtes SQL).
+C'est bon, vous avez trouvé ? Allez, je vous donne la réponse dans le mille :
 
-Ce fichier que l'on va « exporter », est-ce que c'est le même que celui dont tu nous parlais tout à l'heure ? Celui situé par exemple dans C:\wamp\mysql\data ?
+UPDATE jeux_video SET possesseur = 'Florent' WHERE possesseur = 'Michel'
+Traduction : « Dans la table jeux_video  , modifier toutes les entrées dont le champ possesseur  est égal à Michel, et le remplacer par Florent. »
 
-Non, pas du tout. Ce que je vous ai montré tout à l'heure, c'était quelque chose d'illisible. Je vous avais dit qu'on n'y toucherait pas, je ne vous ai pas menti.
+Qu'il y ait 1, 10, 100 ou 1 000 entrées, cette requête à elle seule suffit pour mettre à jour toute la table ! Si c'est pas beau, le SQL… ;-)
 
-Le fichier que vous allez obtenir grâce à « l'exportation » de phpMyAdmin, c'est un fichier qui dit à MySQL comment recréer votre base de données (avec des requêtes en langage SQL). Et ce fichier-là est tout à fait lisible.
+Application en PHP
+De la même manière, en PHP on fait appel à exec()  pour effectuer des modifications :
 
-À quoi sert ce fichier ?
+<?php
+$bdd->exec('UPDATE jeux_video SET prix = 10, nbre_joueurs_max = 32 WHERE nom = \'Battlefield 1942\'');
+?>
+Notez que cet appel renvoie le nombre de lignes modifiées. Essayez de récupérer cette valeur dans une variable et de l'afficher, par exemple comme ceci :
 
-On peut s'en servir pour deux choses :
+<?php
+$nb_modifs = $bdd->exec('UPDATE jeux_video SET possesseur = \'Florent\' WHERE possesseur = \'Michel\'');
+echo $nb_modifs . ' entrées ont été modifiées !';
+?>
+Cela affichera quelque chose comme : 13 entrées ont été modifiées !
 
-transmettre votre base de données sur Internet : pour le moment, votre base de données se trouve sur votre disque dur. Mais lorsque vous voudrez héberger votre site sur Internet, il faudra utiliser la base de données en ligne de votre hébergeur ! Le fichier .sql  que vous allez générer vous permettra de reconstruire la base de données grâce à l'outil d'importation de phpMyAdmin (en général, les hébergeurs proposent eux aussi phpMyAdmin, pour que vous puissiez effectuer facilement des opérations sur votre base en ligne) ;
+Avec une requête préparée
+Si vous insérez des données variables, par exemple envoyées par l'utilisateur, je vous recommande là encore de faire appel à une requête préparée :
 
-faire une copie de sauvegarde de la base de données : on ne sait jamais, si vous faites une bêtise ou si quelqu'un réussit à détruire toutes les informations sur votre site (dont la base de données), vous serez bien content d'avoir une copie de secours sur votre disque dur !
+<?php
+$req = $bdd->prepare('UPDATE jeux_video SET prix = :nvprix, nbre_joueurs_max = :nv_nb_joueurs WHERE nom = :nom_jeu');
+$req->execute(array(
+    'nvprix' => $nvprix,
+    'nv_nb_joueurs' => $nv_nb_joueurs,
+    'nom_jeu' => $nom_jeu
+    ));
+?>
+DELETE : supprimer des données
+Enfin, voilà une dernière requête qui pourra se révéler utile : DELETE  . Rapide et simple à utiliser, elle est quand même un poil dangereuse : après suppression, il n'y a aucun moyen de récupérer les données, alors faites bien attention !
 
-Votre écran doit ressembler à la figure suivante.
+Voici comment on supprime par exemple l'entrée de « Battlefield » :
 
-Exportation d'une table
-Exportation d'une table
-La méthode "Rapide" masque toutes les options détaillées. Choisissez "Personnalisée" pour pouvoir paramétrer l'export.
+DELETE FROM jeux_video WHERE nom='Battlefield 1942'
+Il n'y a rien de plus facile :
 
-Ne prenez pas peur devant toutes ces options ! Retenez juste que :
+DELETE FROM : pour dire « supprimer dans » ;
 
-il faut le plus souvent choisir "Enregistrer la sortie vers un fichier", sinon l'écran va juste nous afficher les requêtes SQL, ce qui ne nous servira à rien ;
+jeux_video : le nom de la table ;
 
-par défaut, l'export contient la structure de la table (les noms des champs et types...) ainsi que les données (chaque entrée de news, par exemple). Vous pouvez choisir d'exporter uniquement la structure ou uniquement les données si besoin ;
+WHERE : indispensable pour indiquer quelle(s) entrée(s) doi(ven)t être supprimée(s).
 
-pour les grosses tables avec beaucoup d'entrées, choisissez "Compression : gzippé" pour faire un fichier beaucoup plus compact. Ce sera plus rapide à télécharger et à envoyer ensuite.
+Si vous oubliez le WHERE  , toutes les entrées seront supprimées. Cela équivaut à vider la table.
 
-Pour faire une sauvegarde complète, il faut donc prendre la structure ET les données, ce qui est automatiquement le cas dans l'option "Rapide" par défaut.
+Je vous laisse essayer cette requête en PHP. Vous pouvez là encore passer par exec()  si vous voulez exécuter une requête bien précise, ou bien utiliser une requête préparée si votre requête dépend de variables.
 
-Pensez à cocher la case « Transmettre » en bas, sinon il ne se passera rien. À noter que vous pouvez demander une compression, ce qui est utile si votre table est très grosse.
+Traiter les erreurs SQL
+Comme vous le savez, le langage SQL est un langage à part entière dont on se sert en PHP. S'il peut y avoir des erreurs en PHP, il peut aussi y avoir des erreurs en SQL !
+Il se peut par exemple que votre requête soit mal écrite, que la table que vous voulez ouvrir n'existe pas, etc. Bref, les erreurs possibles sont là encore nombreuses.
 
-Cliquez sur « Exécuter ». On vous proposera alors de télécharger un fichier : c'est tout à fait normal. N'hésitez pas à regarder ce qu'il y a dans ce fichier : vous allez voir qu'il contient plusieurs requêtes SQL. C'est ce langage que je vais vous apprendre dans les chapitres qui suivent !
+Toutefois, ce n'est pas MySQL qui vous dira qu'il y a une erreur, mais PHP, et ce dernier n'est pas très bavard en ce qui concerne les erreurs SQL. Nous allons donc voir :
 
-Comment dois-je faire pour recréer la base de données sur mon site web ?
+Comment repérer une erreur SQL en PHP.
 
-Il faut aller sur le phpMyAdmin de votre hébergeur. Renseignez-vous pour en connaître l'adresse. Par exemple, chez Free c'est http://phpmyadmin.free.fr/phpMyAdmin  (il faudra indiquer vos login et mot de passe).
+Comment faire parler PHP pour qu'il nous donne l'erreur SQL (de gré, ou de force !).
 
-Une fois dessus, rendez-vous dans l'onglet « Importer » qu'on a vu tout à l'heure. Cliquez sur « Parcourir » pour indiquer où se trouve le fichier SQL que vous venez de créer sur votre disque dur. Faites « Exécuter », attendez qu'il soit envoyé, et c'est bon ! Votre base de données est alors recréée sur Internet !
+Repérer l'erreur SQL en PHP
+Lorsqu'il s'est produit une erreur SQL, la page affiche le plus souvent l'erreur suivante :
 
-Opérations
-Ici, vous pouvez effectuer diverses opérations sur votre table.
-Je ne vais pas les énumérer une à une, ni vous expliquer comment elles fonctionnent, vu que c'est très simple. Sachez simplement que vous pourriez avoir besoin de :
+Fatal error: Call to a member function fetch() on a non-object
 
-changer le nom de la table : indiquez le nouveau nom pour cette table ;
+Cette erreur survient lorsque vous voulez afficher les résultats de votre requête, généralement dans la boucle  while ($donnees = $reponse->fetch())  .
 
-déplacer la table vers : si vous voulez placer cette table dans une autre base de données ;
+Quand vous avez cette erreur, il ne faut pas chercher plus loin, c'est la requête SQL qui précède qui n'a pas fonctionné. Il vous manque cependant des détails sur ce qui a posé problème dans la requête. Nous allons maintenant voir comment on peut remédier à cela. ;)
 
-copier la table : faire une copie de la table, dans une autre base ou dans la même (attention : dans ce cas, il faudra qu'elle ait un nom différent) ;
+Allez ! Crache le morceau !
+Comme visiblement PHP n'a pas envie de nous donner l'erreur renvoyée par MySQL, on va le lui demander d'une autre manière. Je vous avais d'ailleurs présenté cette méthode dans un des premiers chapitres sur MySQL.
 
-optimiser la table : à force d'utiliser une table, surtout si elle est grosse, on finit par avoir des « pertes » qui font que la table n'est plus bien organisée. Un clic là-dessus et hop ! c'est de nouveau arrangé ;
+Repérez la requête qui selon vous plante (certainement celle juste avant la boucle  while  ), et demandez d'afficher l'erreur s'il y en a une, comme ceci :
 
-vider la table : vide tout le contenu de la table. Toutes les entrées vont disparaître, seule la structure de la table restera (c'est-à-dire les champs). Attention, il n'est pas possible d'annuler cette opération ;
+<?php
+$reponse = $bdd->query('SELECT nom FROM jeux_video') or die(print_r($bdd->errorInfo()));
+Si la requête fonctionne, aucune erreur ne sera affichée. Si en revanche la requête plante, PHP arrêtera de générer la page et vous affichera l'erreur donnée par MySQL…
 
-supprimer la table : supprime la totalité de la table (structure et données). Là encore, réfléchissez-y à deux fois avant de tout supprimer, car vous ne pourrez rien récupérer par la suite, à moins d'avoir fait une sauvegarde au préalable avec l'outil d'exportation.
+À partir de là, il va falloir vous débrouiller tout seul, car les erreurs SQL sont assez nombreuses et je ne peux pas toutes les lister.
+
+En général, MySQL vous dit « You have an error in your SQL syntax near 'XXX' ». À vous de bien relire votre requête SQL ; l'erreur se trouve généralement près de l'endroit où on vous l'indique.
 
 En résumé
-phpMyAdmin est un outil qui nous permet de visualiser rapidement l'état de notre base de données et de la modifier, sans avoir à écrire de requêtes SQL.
+On utilise différents mots-clés en fonction du type de modification que l'on souhaite effectuer :
 
-On crée généralement un champ nommé id  qui sert à numéroter les entrées d'une table. Ce champ doit avoir un index PRIMARY (on dit qu'on crée une clé primaire) et l'option AUTO_INCREMENT qui permet de laisser MySQL gérer la numérotation.
+INSERT INTO : ajout d'une entrée ;
 
-MySQL gère différents types de données pour ses champs, à la manière de PHP. On trouve des types adaptés au stockage de nombres, de textes, de dates, etc.
+UPDATE : modification d'une ou plusieurs entrées ;
 
-phpMyAdmin possède un outil d'importation et d'exportation des tables qui nous permettra notamment d'envoyer notre base de données sur Internet lorsque nous mettrons notre site en ligne.
+DELETE : suppression d'une ou plusieurs entrées.
+
+Comme pour la sélection de données, on utilise les requêtes préparées pour personnaliser nos requêtes en fonction de variables.
+
+Lorsqu'on utilise UPDATE  ou DELETE  , il faut penser à filtrer avec un WHERE  , sinon toute la table sera affectée par l'opération !
+
+PHP indique si une erreur avec MySQL est intervenue.

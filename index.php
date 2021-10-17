@@ -7,13 +7,9 @@
 </head>
 
 <body>
-    <?php include 'req.php'; ?>
+     <?php // include 'insert.php'; ?> 
     <hr>
-    <?php include 'req_1.php'; ?>
-    <hr>
-    <?php include 'req_2.php'; ?>
-    <hr>
-    <?php include 'req_3.php'; ?>
+   
 </body>
 
 </html>
