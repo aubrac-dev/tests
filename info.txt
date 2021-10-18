@@ -1,2 +1,86 @@
  NEW: jointure entre les deux tables
 
+Comprenez le principe de jointure
+Nous avons donc maintenant deux tables :
+
+comments 
+
+users  
+
+Les informations sont séparées dans des tables différentes, et c'est bien. Cela évite de dupliquer des informations sur le disque.
+
+Cependant, lorsqu'on récupère la liste des commentaires, si on souhaite obtenir le nom des auteurs, il faut adapter la requête pour récupérer aussi les informations issues de la table users  .
+
+Pour cela, on doit faire une jointure.
+
+Il existe plusieurs types de jointures, qui nous permettent de choisir exactement les données que l'on veut récupérer. Je vous propose d'en découvrir deux, les plus importantes :
+
+Les jointures internes : elles ne sélectionnent que les données qui ont une correspondance entre les deux tables.
+
+Les jointures externes : elles sélectionnent toutes les données, même si certaines n'ont pas de correspondance dans l'autre table.
+
+Il est important de bien comprendre la différence entre une jointure interne et une jointure externe.
+
+Une jointure interne peut être effectuée à l'aide du mot-clé JOIN :
+
+# Liste des noms et commentaires associés
+SELECT u.full_name, c.comment
+FROM users u
+INNER JOIN comments c
+ON u.user_id = c.user_id
+
+
+Si vous voulez :
+
+filtrer ( WHERE  ),
+
+ordonner ( ORDER BY  )
+
+ou limiter les résultats ( LIMIT  ),
+
+… vous devez le faire à la fin de la requête, après le « ON u.user_id = c.user_id ».
+
+Par exemple :
+
+# Liste des noms et commentaires associés
+# à la recette Cassoulet
+# du plus vieux au plus récent
+# limité à 10
+SELECT u.full_name, c.comment
+FROM users u
+INNER JOIN comments c
+ON u.user_id = c.user_id
+WHERE c.recipe = "Cassoulet"
+ORDER BY c.created_at DESC
+LIMIT 10
+
+Effectuez des jointures externes
+
+1. Récupérez toute la table de gauche avec LEFT JOIN
+
+# Liste des noms et commentaires associés
+SELECT u.full_name, c.comment
+FROM users u
+LEFT JOIN comments c
+ON u.user_id = c.user_id
+
+Récupérez toute la table de droite avec RIGHT JOIN
+
+# Liste des noms et commentaires associés
+SELECT u.full_name, c.comment
+FROM users u
+RIGHT JOIN comments c
+ON u.user_id = c.user_id
+
+D'accord, mais est-ce qu'il ne faudrait pas faire la même chose avec la table recipes ?
+
+Si, complètement ! À ce moment-là, vous ferez non pas une mais deux jointures !
+
+Par exemple, la liste des utilisateurs, commentaires et nom de recettes, comme ceci :
+
+SELECT u.full_name, c.comment, r.title
+FROM users u
+JOIN comments c
+	ON u.user_id = c.user_id
+JOIN recipes r
+	ON c.recipe_id = r.recipe_id
