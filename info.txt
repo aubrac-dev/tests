@@ -1,246 +1,496 @@
-TP : un minichat
+Les fonctions SQL
 
-Voilà un TP qui va nous permettre de mettre en pratique tout ce que l'on vient d'apprendre sur le langage SQL. Il faut dire qu'on a enchaîné beaucoup de nouveautés dans les chapitres précédents : base de données, extraction des informations contenues dans une table, etc.
+Vous connaissez déjà les fonctions en PHP, mais vous allez découvrir dans ce chapitre que SQL propose lui aussi toute une série de fonctions ! Le langage SQL permet en effet d'effectuer des calculs directement sur ses données, à l'aide de fonctions toutes prêtes.
 
-Avec les connaissances que vous avez maintenant, vous êtes en mesure de réaliser de vrais scripts qui pourront vous être utiles pour votre site, comme un minichat (ce qu'on va faire) ou encore un livre d'or, un système de news (ou blog), etc. Ces scripts sont en fait assez similaires, mais le plus simple d'entre eux est le minichat.
+Celles-ci sont moins nombreuses qu'en PHP, mais elles sont spécialement dédiées aux bases de données et se révèlent très puissantes dans la pratique. Pour reprendre notre exemple de la table jeux_video  , elles permettent de récupérer très simplement le prix moyen de l'ensemble des jeux, de compter le nombre de jeux que possède chaque personne, d'extraire le jeu le plus cher ou le moins cher, etc. Les fonctions se révèlent également indispensables lorsqu'on doit travailler avec des dates en SQL, comme nous le ferons dans le chapitre suivant.
 
-Ce dernier permettra d'ajouter facilement une touche de dynamisme à votre site… mais encore faut-il le construire. À nous de jouer !
+Les fonctions SQL peuvent être classées en deux catégories :
 
-Instructions pour réaliser le TP
-Pour préparer ce TP, nous allons voir les points suivants :
+les fonctions scalaires : elles agissent sur chaque entrée. Par exemple, vous pouvez transformer en majuscules la valeur de chacune des entrées d'un champ ;
 
-prérequis ;
+les fonctions d'agrégat : lorsque vous utilisez ce type de fonctions, des calculs sont faits sur l'ensemble de la table pour retourner une valeur. Par exemple, calculer la moyenne des prix retourne une valeur : le prix moyen.
 
-objectifs ;
+Les fonctions scalaires
+Nous allons d'abord découvrir le mode d'emploi d'une fonction SQL de type scalaire : la fonction UPPER  . Lorsque vous aurez appris à vous en servir, vous serez capable de faire de même avec toutes les autres fonctions scalaires. Je vous proposerai alors une petite sélection de fonctions scalaires à connaître, sachant qu'il en existe d'autres mais que nous ne pouvons pas toutes les passer en revue, car ce serait bien trop long.
 
-structure de la table MySQL ;
-
-structure des pages PHP ;
-
-rappel sur les consignes de sécurité.
-
-Prérequis
-Vous pourrez suivre ce TP sans problème si vous avez lu tous les chapitres précédents. Plus précisément, nous allons utiliser les notions suivantes :
-
-transmission de variables via un formulaire ;
-
-lire dans une table ;
-
-écrire dans une table ;
-
-utilisation de PDO et des requêtes préparées.
-
-Objectifs
-Qu'est-ce que je vous avais dit qu'il fallait absolument faire avant de commencer à attaquer notre script PHP ? Un brouillon !
-
-Eh oui, votre script ne va pas s'écrire tout seul, comme par magie, alors il va falloir réfléchir un petit peu avant de commencer. Il faut particulièrement se demander ce que l'on veut exactement faire.
-
-Quelles seront les fonctionnalités de mon minichat ?
-
-Ce sera quelque chose de basique pour commencer, mais rien ne vous empêchera de l'améliorer à votre sauce.
-
-On souhaite avoir, sur la même page et en haut, deux zones de texte : une pour écrire votre pseudo, une autre pour écrire votre petit message. Ensuite, un bouton « Envoyer » permettra d'envoyer les données à MySQL pour qu'il les enregistre dans une table.
-
-En dessous, le script devra afficher les 10 derniers messages qui ont été enregistrés, en allant du plus récent au plus ancien.
-
-C'est un peu flou ? O.K., regardez sur la figure suivante à quoi doit ressembler votre page PHP une fois terminée.
-Une fois que l'on sait ce que l'on veut obtenir, il nous est beaucoup plus facile de le réaliser ! Et ne rigolez pas, trop de gens se lancent dans un script sans vraiment savoir ce qu'ils veulent faire, ce qui les conduit bien souvent dans un mur.
-
-Aperçu du mini-chat une fois réalisé
-Aperçu du minichat une fois réalisé
-Structure de la table MySQL
-Comme à chaque fois que l'on se servira d'une base de données, on va commencer par étudier sa forme, c'est-à-dire la liste des champs qu'elle contient. Voici un petit tableau que j'ai réalisé en une minute sur une feuille de papier brouillon :
+Utiliser une fonction scalaire SQL
+Pour nos exemples, nous allons nous baser sur la table jeux_video  que nous connaissons bien maintenant. Pour rappel, voici à quoi elle ressemble :
 
 ID
 
-pseudo
+nom
 
-message
+possesseur
+
+console
+
+prix
+
+nbre_joueurs_max
+
+commentaires
 
 1
 
-Tom
+Super Mario Bros
 
-Il fait beau aujourd'hui, vous ne trouvez pas ?
+Florent
 
-2
-
-John
-
-Ouais, ça faisait un moment qu'on n'avait pas vu la lumière du soleil !
-
-3
-
-Patrice
-
-Ça vous tente d'aller à la plage aujourd'hui ? Y'a de super vagues !
+NES
 
 4
 
-Tom
+1
 
-Cool, bonne idée ! J'amène ma planche !
+Un jeu d'anthologie !
+
+2
+
+Sonic
+
+Patrick
+
+Mega Drive
+
+2
+
+1
+
+Pour moi, le meilleur jeu au monde !
+
+3
+
+Zelda : Ocarina of Time
+
+Florent
+
+Nintendo 64
+
+15
+
+1
+
+Un jeu grand, beau et complet, comme on en voit rarement de nos jours.
+
+4
+
+Mario Kart 64
+
+Florent
+
+Nintendo 64
+
+25
+
+4
+
+Un excellent jeu de kart !
 
 5
 
-John
+Super Smash Bros Melee
 
-Comptez sur moi !
+Michel
 
-On distingue les champs suivants :
+GameCube
 
-ID  (type INT  ) : il nous permettra de savoir dans quel ordre ont été postés les messages. Il faudra le mettre en auto_increment  pour que les numéros s'écrivent tout seuls, et ne pas oublier de sélectionner « Primaire » (cela dit à MySQL que c'est le champ qui numérote les entrées) ;
+55
 
-pseudo  (type VARCHAR  ) : pensez à indiquer la taille maximale du champ (je vous conseille de mettre le maximum, « 255 ») ;
+4
 
-message  (type VARCHAR  ) : de même, on indiquera une taille maximale de 255 caractères. Si vous pensez que vos messages seront plus longs, utilisez plutôt le type TEXT  , beaucoup moins limité.
+Un jeu de baston délirant !
 
-Commencez donc par créer cette table dans votre base de données avec phpMyAdmin. Appelez-la comme vous voulez, moi j'ai choisi minichat  .
+On écrit les noms des fonctions SQL en majuscules, comme on le fait déjà pour la plupart des mots-clés comme SELECT  , INSERT  , etc. Ce n'est pas une obligation mais plutôt une convention, une habitude qu'ont prise les programmeurs.
 
-Structure des pages PHP
-Comme pour le TP « Page protégée par mot de passe », nous allons utiliser deux fichiers PHP :
+Pour vous montrer comment on utilise les fonctions scalaires SQL, je vais me baser sur la fonction UPPER()  qui permet de convertir l'intégralité d'un champ en majuscules. Supposons que nous souhaitions obtenir les noms de tous les jeux en majuscules ; voici comment on écrirait la requête SQL :
 
-minichat.php : contient le formulaire permettant d'ajouter un message, et liste les 10 derniers messages ;
+SELECT UPPER(nom) FROM jeux_video
+La fonction UPPER  est utilisée sur le champ nom  . On récupère ainsi tous les noms des jeux en majuscules.
 
-minichat_post.php : insère le message reçu avec $_POST  dans la base de données, puis redirige vers minichat.php  .
+Cela modifie-t-il le contenu de la table ?
 
-Il aurait été possible de tout faire sur une seule page PHP, mais pour bien séparer le code, il est préférable d'utiliser deux fichiers, comme sur la figure suivante.
+Non ! La table reste la même. La fonction UPPER  modifie seulement la valeur envoyée à PHP. On ne touche donc pas au contenu de la table.
 
-Organisation des pages du mini-chat
-Organisation des pages du minichat
-Vous avez toutes les connaissances nécessaires pour réaliser un minichat basé sur la structure du schéma précédent… à l'exception de la redirection. En effet, il existe plusieurs moyens de rediriger le visiteur vers une autre page (via une balise <meta>  , par exemple), mais le plus propre et le plus rapide consiste à faire une redirection HTTP. Voici comment il faut procéder pour faire cela sur la page minichat_post.php :
+Cela crée en fait un « champ virtuel » qui n'existe que le temps de la requête. Il est conseillé de donner un nom à ce champ virtuel qui représente les noms des jeux en majuscules. Il faut utiliser pour cela le mot-clé AS  , comme ceci :
 
-<?php
-// Effectuer ici la requête qui insère le message
-// Puis rediriger vers minichat.php comme ceci :
-header('Location: minichat.php');
-?>
-Le visiteur ne verra jamais la page minichat_post.php  . Celle-ci n'affiche rien, mais commande en revanche au navigateur du visiteur de retourner sur minichat.php  .
+SELECT UPPER(nom) AS nom_maj FROM jeux_video
+On récupère les noms des jeux en majuscules via un champ virtuel appelé nom_maj  .
 
-La fonction header()  permet d'envoyer ce qu'on appelle des « en-têtes HTTP ». C'est le protocole qu'utilisent le serveur et le client pour échanger des pages web. Ici, on utilise une des possibilités de HTTP, qui commande une redirection via la commande Location  .
-Par rapport à d'autres types de redirection (comme la balise <meta>  ), cette technique a l'avantage d'être instantanée et transparente pour l'utilisateur. De plus, s'il rafraîchit ensuite la page minichat.php  , il ne risque pas d'avoir le message souvent gênant et déroutant : « Pour afficher cette page, les informations précédemment transmises doivent être renvoyées. Êtes-vous sûr de vouloir le faire ? ».
+Ce champ virtuel est appelé alias.
 
-Rappel sur les consignes de sécurité
-Un petit rappel ne peut pas faire de mal : ne faites jamais confiance aux données de l'utilisateur ! Tout ce qui vient de l'utilisateur doit être traité avec la plus grande méfiance.
+Voici le tableau que retournera MySQL après la requête précédente :
 
-Ici, on a une page minichat_post.php  assez simple qui reçoit deux champs : le pseudo et le message. À priori, il n'y a pas de vérification supplémentaire à faire, si ce n'est qu'il faudra veiller, lors de l'affichage, à protéger les chaînes de caractères contre la faille XSS (celle qui permet d'insérer du HTML et du JavaScript dans la page). Il faudra donc bien veiller à appeler htmlspecialchars()  pour protéger les chaînes.
+nom_maj
 
-À vous de jouer !
-Allez, j'en ai assez dit. C'est maintenant à votre tour de réfléchir. Avec les éléments que je vous ai donnés, et avec ce que vous avez appris dans les chapitres précédents, vous devez être capable de réaliser le minichat !
+SUPER MARIO BROS
 
-Si vous avez un peu de mal, et si votre script ne marche pas, ne le supprimez pas dans un moment de rage (il ne faut jamais s'énerver). Faites une pause et revenez-y plus tard.
+SONIC
 
-Si vous coincez vraiment, vous pouvez demander de l'aide sur les forums ou regarder la correction pour vous aider. Faites l'effort dans tous les cas de travailler ce script ; ce sera très formateur, vous verrez !
+ZELDA : OCARINA OF TIME
 
-Correction
-Hop, hop, hop ! On relève les copies !
+MARIO KART 64
 
-Vous allez maintenant voir ce que j'attendais de vous. Si vous avez réussi à faire quelque chose qui marche, bravo !
-Et si vous n'y êtes pas arrivé, ne vous en faites pas trop : le principal est que vous ayez fait l'effort de réfléchir. En voyant la correction, vous apprendrez énormément de choses !
+SUPER SMASH BROS MELEE
 
-Il y avait deux fichiers ; commençons par minichat.php  .
-
-minichat.php : formulaire et liste des derniers messages
-Cette page contient le formulaire d'ajout de message, ainsi que la liste des derniers messages.
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Mini-chat</title>
-    </head>
-    <style>
-    form
-    {
-        text-align:center;
-    }
-    </style>
-    <body>
-    
-    <form action="minichat_post.php" method="post">
-        <p>
-        <label for="pseudo">Pseudo</label> : <input type="text" name="pseudo" id="pseudo" /><br />
-        <label for="message">Message</label> :  <input type="text" name="message" id="message" /><br />
-
-        <input type="submit" value="Envoyer" />
-    </p>
-    </form>
+On peut s'en servir en PHP pour afficher les noms des jeux en majuscules :
 
 <?php
-// Connexion à la base de données
-try
-{
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
-}
-catch(Exception $e)
-{
-        die('Erreur : '.$e->getMessage());
-}
+$reponse = $bdd->query('SELECT UPPER(nom) AS nom_maj FROM jeux_video');
 
-// Récupération des 10 derniers messages
-$reponse = $bdd->query('SELECT pseudo, message FROM minichat ORDER BY ID DESC LIMIT 0, 10');
-
-// Affichage de chaque message (toutes les données sont protégées par htmlspecialchars)
 while ($donnees = $reponse->fetch())
 {
-    echo '<p><strong>' . htmlspecialchars($donnees['pseudo']) . '</strong> : ' . htmlspecialchars($donnees['message']) . '</p>';
+    echo $donnees['nom_maj'] . '<br />';
 }
 
 $reponse->closeCursor();
 
 ?>
-    </body>
-</html>
-Le code de cette page est séparé en deux parties :
+Afficher les noms des jeux en majuscules 
 
-le formulaire (en HTML) ;
+Afficher les noms des jeux en majuscules
+Comme vous le voyez, PHP ne récupère qu'un champ nommé nom_maj  (même s'il n'existe pas dans la table). En affichant le contenu de ce champ, on ne récupère que les noms des jeux en majuscules.
 
-la liste des messages (affichée en PHP à l'aide d'une requête SQL).
+Bien entendu, vous pouvez aussi récupérer le contenu des autres champs comme avant, sans forcément leur appliquer une fonction :
 
-Il n'y avait pas de piège particulier, à l'exception du htmlspecialchars()  à ne pas oublier sur le message ET sur le pseudo. Toutes les données issues du formulaire doivent être protégées, pour éviter la faille XSS dont nous avons parlé dans un chapitre précédent.
+SELECT UPPER(nom) AS nom_maj, possesseur, console, prix FROM jeux_video
+On récupèrera alors les données suivantes :
 
-minichat_post.php : enregistrement et redirection
-La page minichat_post.php  reçoit les données du formulaire, enregistre le message et redirige ensuite le visiteur sur la liste des derniers messages.
+nom_maj
+
+possesseur
+
+console
+
+prix
+
+SUPER MARIO BROS
+
+Florent
+
+NES
+
+4
+
+SONIC
+
+Patrick
+
+Mega Drive
+
+2
+
+ZELDA : OCARINA OF TIME
+
+Florent
+
+Nintendo 64
+
+15
+
+MARIO KART 64
+
+Florent
+
+Nintendo 64
+
+25
+
+SUPER SMASH BROS MELEE
+
+Michel
+
+GameCube
+
+55
+
+Vous savez maintenant utiliser une fonction SQL scalaire. ;-)
+Passons en revue quelques fonctions du même type, et qui s'utilisent donc de la même manière.
+
+Présentation de quelques fonctions scalaires utiles
+Je vais vous présenter une sélection de fonctions scalaires qu'il peut être utile de connaître. Il en existe bien d'autres, comme nous le verrons à la fin de cette liste, mais il serait trop long et peu utile de toutes les présenter ici.
+
+UPPER : convertir en majuscules
+Cette fonction convertit le texte d'un champ en majuscules. Nous l'avons découverte pour introduire les fonctions SQL :
+
+SELECT UPPER(nom) AS nom_maj FROM jeux_video
+Ainsi, le jeu « Sonic » sera renvoyé sous la forme « SONIC » dans un champ nommé nom_maj  .
+
+LOWER : convertir en minuscules
+Cette fonction a l'effet inverse : le contenu sera entièrement écrit en minuscules.
+
+SELECT LOWER(nom) AS nom_min FROM jeux_video
+Cette fois, le jeu « Sonic » sera renvoyé sous la forme « sonic » dans un champ nommé nom_min  .
+
+LENGTH : compter le nombre de caractères
+Vous pouvez obtenir la longueur d'un champ avec la fonction LENGTH() :
+
+SELECT LENGTH(nom) AS longueur_nom FROM jeux_video
+Pour « Sonic », on récupèrera donc la valeur 5 dans un champ longueur_nom  .
+
+ROUND : arrondir un nombre décimal
+La fonction ROUND()  s'utilise sur des champs comportant des valeurs décimales. Il n'y en a pas dans la table jeux_video  , mais si on avait des prix décimaux, on pourrait arrondir les valeurs avec cette fonction.
+
+Celle-ci prend cette fois deux paramètres : le nom du champ à arrondir et le nombre de chiffres après la virgule que l'on souhaite obtenir. Exemple :
+
+SELECT ROUND(prix, 2) AS prix_arrondi FROM jeux_video
+Ainsi, si un jeu coûte 25,86999 euros, on obtiendra la valeur 25,87 euros dans un champ prix_arrondi  .
+
+Et bien d'autres !
+Il existe beaucoup d'autres fonctions SQL du même type, mais je ne peux pas toutes vous les présenter. La documentation de MySQL vous propose une liste bien plus complète de fonctions mathématiques (comme ROUND  ) et de fonctions sur les chaînes de caractères (comme UPPER  ). Si vous voulez en découvrir d'autres, c'est par là qu'il faut aller !
+
+Les fonctions d'agrégat
+Comme précédemment, nous allons d'abord voir comment on utilise une fonction d'agrégat dans une requête SQL et comment on récupère le résultat en PHP, puis je vous présenterai une sélection de fonctions à connaître. Bien entendu, il en existe bien d'autres que vous pourrez découvrir dans la documentation. L'essentiel est de comprendre comment s'utilise ce type de fonctions : vous pourrez ensuite appliquer ce que vous connaissez à n'importe quelle autre fonction du même type.
+
+Utiliser une fonction d'agrégat SQL
+Ces fonctions diffèrent assez des précédentes. Plutôt que de modifier des valeurs une à une, elles font des opérations sur plusieurs entrées pour retourner une seule valeur.
+
+Par exemple, ROUND  permettait d'arrondir chaque prix. On récupérait autant d'entrées qu'il y en avait dans la table. En revanche, une fonction d'agrégat comme AVG  renvoie une seule entrée : la valeur moyenne de tous les prix.
+
+Regardons de près la fonction d'agrégat AVG  . Elle calcule la moyenne d'un champ contenant des nombres. Utilisons-la sur le champ prix  :
+
+SELECT AVG(prix) AS prix_moyen FROM jeux_video
+On donne là encore un alias au résultat donné par la fonction. La particularité, c'est que cette requête ne va retourner qu'une seule entrée, à savoir le prix moyen de tous les jeux :
+
+prix_moyen
+
+28.34
+
+Pour afficher cette information en PHP, on pourrait faire comme on en a l'habitude (cela fonctionne) :
 
 <?php
-// Connexion à la base de données
-try
+$reponse = $bdd->query('SELECT AVG(prix) AS prix_moyen FROM jeux_video');
+
+while ($donnees = $reponse->fetch())
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', '');
-}
-catch(Exception $e)
-{
-        die('Erreur : '.$e->getMessage());
+    echo $donnees['prix_moyen'];
 }
 
-// Insertion du message à l'aide d'une requête préparée
-$req = $bdd->prepare('INSERT INTO minichat (pseudo, message) VALUES(?, ?)');
-$req->execute(array($_POST['pseudo'], $_POST['message']));
+$reponse->closeCursor();
 
-// Redirection du visiteur vers la page du minichat
-header('Location: minichat.php');
 ?>
-Ce code est relativement court et sans surprise. On se connecte à la base, on insère les données et on redirige le visiteur vers la page minichat.php  , comme on vient d'apprendre à le faire.
+Néanmoins, pourquoi s'embêterait-on à faire une boucle, étant donné qu'on sait qu'on ne va récupérer qu'une seule entrée, puisqu'on utilise une fonction d'agrégat ?
 
-En fait, ce code peut être amélioré (je vais en parler un peu plus loin). En effet, on ne teste pas si le pseudo et le message existent bien, s'ils sont vides ou non, etc. Il est donc en théorie possible d'enregistrer des messages vides, ce qui idéalement ne devrait pas être autorisé.
+On peut se permettre d'appeler fetch()  une seule fois et en dehors d'une boucle, étant donné qu'il n'y a qu'une seule entrée. Le code suivant est donc un peu plus adapté dans le cas présent :
 
-Le mini-chat
-Le minichat
-Aller plus loin
-Il serait dommage d'en rester là… Le script de minichat que je vous ai fait faire est certes amusant, mais je suis sûr que vous aimeriez l'améliorer !
+<?php
+$reponse = $bdd->query('SELECT AVG(prix) AS prix_moyen FROM jeux_video');
 
-Cependant, je ne peux que vous donner des idées. Je ne peux pas vous proposer de correction pour chacune de ces idées, car ce serait beaucoup trop long.
-Mais ne vous en faites pas : si je vous propose de procéder à des améliorations, c'est que vous en êtes capable. Et puis, n'oubliez pas qu'il y a un forum sur le site : si jamais vous séchez un peu, n'hésitez pas à aller y demander de l'aide !
+$donnees = $reponse->fetch();
+echo $donnees['prix_moyen'];
 
-Voici quelques idées pour améliorer le script.
+$reponse->closeCursor();
 
-Retenir le pseudo. On doit actuellement saisir à nouveau son pseudo à chaque nouveau message. Comme vous le savez probablement, il est possible en HTML de préremplir un champ avec l'attribut value  . Par exemple :
+?>
+Ce code est plus simple et plus logique. On récupère la première et seule entrée avec fetch()  et on affiche ce qu'elle contient, puis on ferme le curseur. Inutile de le faire dans une boucle, étant donné qu'il n'y a pas de seconde entrée.
 
-<input type="text" name="pseudo" value="M@teo21" />
-Remplacez M@teo21  par le pseudonyme du visiteur. Ce pseudonyme peut être issu d'un cookie, par exemple : lorsqu'il poste un message, vous inscrivez son pseudo dans un cookie, ce qui vous permet ensuite de préremplir le champ.
+N'hésitez pas à filtrer !
+Bien entendu, vous pouvez profiter de toute la puissance du langage SQL pour obtenir, par exemple, le prix moyen des jeux appartenant à Patrick. Voici comment on s'y prendrait :
 
-Proposez d'actualiser le minichat. Le minichat ne s'actualise pas automatiquement s'il y a de nouveaux messages. C'est normal, ce serait difficile à faire à notre niveau. À la base, le Web n'a pas vraiment été prévu pour ce type d'application. En revanche, ce que vous pouvez facilement faire, c'est proposer un lien « Rafraîchir » qui charge à nouveau la page minichat.php  . Ainsi, s'il y a de nouveaux messages, ils apparaîtront après un clic sur le lien.
+SELECT AVG(prix) AS prix_moyen FROM jeux_video WHERE possesseur='Patrick'
+Le calcul de la moyenne ne sera fait que sur la liste des jeux qui appartiennent à Patrick. Vous pourriez même combiner les conditions pour obtenir le prix moyen des jeux de Patrick qui se jouent à un seul joueur. Essayez !
 
-Afficher les anciens messages. On ne voit actuellement que les 10 derniers messages. Sauriez-vous trouver un moyen d'afficher les anciens messages ? Bien sûr, les afficher tous d'un coup sur la même page n'est pas une bonne idée. Vous pourriez imaginer un paramètre $_GET['page']  qui permettrait de choisir le numéro de page des messages à afficher.
+Ne pas mélanger une fonction d'agrégat avec d'autres champs
+Soyez attentif à ce point car il n'est pas forcément évident à comprendre : vous ne devez pas récupérer d'autres champs de la table quand vous utilisez une fonction d'agrégat, contrairement à tout à l'heure avec les fonctions scalaires. En effet, quel sens cela aurait-il de faire :
 
-Au travail !
+SELECT AVG(prix) AS prix_moyen, nom FROM jeux_video
+On récupérerait d'un côté le prix moyen de tous les jeux et de l'autre la liste des noms de tous les jeux… Il est impossible de représenter ceci dans un seul et même tableau.
+
+Comme vous le savez, SQL renvoie les informations sous la forme d'un tableau. Or, on ne peut pas représenter la moyenne des prix (qui tient en une seule entrée) en même temps que la liste des jeux. Si on voulait obtenir ces deux informations, il faudrait faire deux requêtes.
+
+Présentation de quelques fonctions d'agrégat utiles
+AVG : calculer la moyenne
+C'est la fonction que l'on vient d'étudier pour découvrir les fonctions d'agrégat. Elle retourne la moyenne d'un champ contenant des nombres :
+
+SELECT AVG(prix) AS prix_moyen FROM jeux_video
+SUM : additionner les valeurs
+La fonction SUM  permet d'additionner toutes les valeurs d'un champ. Ainsi, on pourrait connaître la valeur totale des jeux appartenant à Patrick :
+
+SELECT SUM(prix) AS prix_total FROM jeux_video WHERE possesseur='Patrick'
+MAX : retourner la valeur maximale
+Cette fonction analyse un champ et retourne la valeur maximale trouvée. Pour obtenir le prix du jeu le plus cher :
+
+SELECT MAX(prix) AS prix_max FROM jeux_video
+MIN : retourner la valeur minimale
+De même, on peut obtenir le prix du jeu le moins cher :
+
+SELECT MIN(prix) AS prix_min FROM jeux_video
+COUNT : compter le nombre d'entrées
+La fonction COUNT  permet de compter le nombre d'entrées. Elle est très intéressante mais plus complexe. On peut en effet l'utiliser de plusieurs façons différentes.
+
+L'utilisation la plus courante consiste à lui donner *  en paramètre :
+
+SELECT COUNT(*) AS nbjeux FROM jeux_video
+On obtient ainsi le nombre total de jeux dans la table.
+
+On peut bien entendu filtrer avec une clause WHERE  , pour obtenir le nombre de jeux appartenant à Florent, par exemple :
+
+SELECT COUNT(*) AS nbjeux FROM jeux_video WHERE possesseur='Florent'
+Il est possible de compter uniquement les entrées pour lesquelles l'un des champs n'est pas vide, c'est-à-dire qu'il ne vaut pas NULL  . Il n'y a pas de jeu de ce type dans notre table jeux_video  , mais supposons que pour certains jeux on ne connaisse pas le nombre de joueurs maximum. On laisserait certaines entrées vides, ce qui aurait pour effet d'afficher NULL  (pas de valeur) dans la colonne nbre_joueurs_max  (comme dans le tableau suivant).
+
+ID
+
+nom
+
+possesseur
+
+console
+
+prix
+
+nbre_joueurs_max
+
+commentaires
+
+1
+
+Super Mario Bros
+
+Florent
+
+NES
+
+4
+
+NULL
+
+Un jeu d'anthologie !
+
+2
+
+Sonic
+
+Patrick
+
+Mega Drive
+
+2
+
+NULL
+
+Pour moi, le meilleur jeu au monde !
+
+3
+
+Zelda : Ocarina of Time
+
+Florent
+
+Nintendo 64
+
+15
+
+1
+
+Un jeu grand, beau et complet, comme on en voit rarement de nos jours.
+
+4
+
+Mario Kart 64
+
+Florent
+
+Nintendo 64
+
+25
+
+4
+
+Un excellent jeu de kart !
+
+5
+
+Super Smash Bros Melee
+
+Michel
+
+GameCube
+
+55
+
+NULL
+
+Un jeu de baston délirant !
+
+Dans ce cas, on peut compter uniquement les jeux qui ont un nombre de joueurs maximum défini. On doit indiquer en paramètre le nom du champ à analyser :
+
+SELECT COUNT(nbre_joueurs_max) AS nbjeux FROM jeux_video
+Dans notre exemple, seuls les jeux Zelda et Mario Kart seront comptés car on connaît leur nombre de joueurs maximum. Donc on obtiendra « 2 » en réponse.
+
+Enfin, il est possible de compter le nombre de valeurs distinctes sur un champ précis. Par exemple dans la colonne possesseur  , Florent apparaît plusieurs fois, Patrick aussi, etc. Mais combien y a-t-il de personnes différentes dans la table ? On peut le savoir en utilisant le mot-clé DISTINCT  devant le nom du champ à analyser, comme ceci :
+
+SELECT COUNT(DISTINCT possesseur) AS nbpossesseurs FROM jeux_video
+On peut ainsi facilement savoir combien de personnes différentes sont référencées dans la table. Essayez de faire de même pour connaître le nombre de consoles différentes dans la table !
+
+GROUP BY et HAVING : le groupement de données
+Je vous disais un peu plus tôt qu'on ne pouvait pas récupérer d'autres champs lorsqu'on utilisait une fonction d'agrégat. Prenons par exemple la requête suivante :
+
+SELECT AVG(prix) AS prix_moyen, console FROM jeux_video
+Ça n'a pas de sens de récupérer le prix moyen de tous les jeux et le champ « Console » à la fois. Il n'y a qu'un seul prix moyen pour tous les jeux, mais plusieurs consoles. MySQL ne peut pas renvoyer un tableau correspondant à ces informations-là.
+
+GROUP BY : grouper des données
+En revanche, ce qui pourrait avoir du sens, ce serait de demander le prix moyen des jeux pour chaque console ! Pour faire cela, on doit utiliser un nouveau mot-clé : GROUP BY  . Cela signifie « grouper par ». On utilise cette clause en combinaison d'une fonction d'agrégat (comme AVG  ) pour obtenir des informations intéressantes sur des groupes de données.
+
+Voici un exemple d'utilisation de GROUP BY :
+
+SELECT AVG(prix) AS prix_moyen, console FROM jeux_video GROUP BY console
+GROUP BY console
+GROUP BY console
+Il faut utiliser GROUP BY  en même temps qu'une fonction d'agrégat, sinon il ne sert à rien. Ici, on récupère le prix moyen et la console, et on choisit de grouper par console. Par conséquent, on obtiendra la liste des différentes consoles de la table et le prix moyen des jeux de chaque plateforme !
+
+prix_moyen
+
+console
+
+12.67
+
+Dreamcast
+
+5.00
+
+Game Boy
+
+47.50
+
+GameCube
+
+Cette fois, les valeurs sont cohérentes ! On a la liste des consoles et le prix moyen des jeux associés.
+
+Exercice : essayez d'obtenir de la même façon la valeur totale des jeux que possède chaque personne.
+
+HAVING : filtrer les données regroupées
+HAVING  est un peu l'équivalent de WHERE  , mais il agit sur les données une fois qu'elles ont été regroupées. C'est donc une façon de filtrer les données à la fin des opérations.
+
+Voyez la requête suivante :
+
+SELECT AVG(prix) AS prix_moyen, console FROM jeux_video GROUP BY console HAVING prix_moyen <= 10
+HAVING prix_moyen <= 10
+HAVING prix_moyen <= 10
+Avec cette requête, on récupère uniquement la liste des consoles et leur prix moyen si ce prix moyen ne dépasse pas 10 euros.
+
+HAVING  ne doit s'utiliser que sur le résultat d'une fonction d'agrégat. Voilà pourquoi on l'utilise ici sur prix_moyen  et non sur console  .
+
+Je ne comprends pas la différence entre WHERE  et HAVING  . Les deux permettent de filtrer, non ?
+
+Oui, mais pas au même moment. WHERE  agit en premier, avant le groupement des données, tandis que HAVING  agit en second, après le groupement des données. On peut d'ailleurs très bien combiner les deux, regardez l'exemple suivant :
+
+SELECT AVG(prix) AS prix_moyen, console FROM jeux_video WHERE possesseur='Patrick' GROUP BY console HAVING prix_moyen <= 10
+WHERE agit avant HAVING
+WHERE agit avant HAVING
+Ça commence à faire de la requête maousse costaude. ;-)
+
+Ici, on demande à récupérer le prix moyen par console de tous les jeux de Patrick ( WHERE  ), à condition que le prix moyen des jeux de la console ne dépasse pas 10 euros ( HAVING  ).
+
+En résumé
+MySQL permet d'exécuter certaines fonctions lui-même, sans avoir à passer par PHP. Ces fonctions modifient les données renvoyées.
+
+Il existe deux types de fonctions :
+
+les fonctions scalaires : elles agissent sur chaque entrée récupérée. Elles permettent par exemple de convertir tout le contenu d'un champ en majuscules ou d'arrondir chacune des valeurs ;
+
+les fonctions d'agrégat : elles effectuent des calculs sur plusieurs entrées pour retourner une et une seule valeur. Par exemple : calcul de la moyenne, somme des valeurs, comptage du nombre d'entrées…
+
+On peut donner un autre nom aux champs modifiés par les fonctions, en créant des alias à l'aide du mot-clé AS  .
+
+Lorsqu'on utilise une fonction d'agrégat, il est possible de regrouper des données avec GROUP BY  .
+
+Après un groupement de données, on peut filtrer le résultat avec HAVING  . Il ne faut pas le confondre avec WHERE qui filtre avant le groupement des données.
